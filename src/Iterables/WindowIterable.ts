@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WindowIterable<T> extends IterableIterator<T[]> {
+export class WindowIterable<T> extends IterableIterator<T[], WindowIterable<T>> {
     private readonly source: Iterable<T>;
     private readonly elements: T[];
     private readonly size: number;
@@ -18,7 +18,7 @@ export class WindowIterable<T> extends IterableIterator<T[]> {
         this.index = 0;
     }
 
-    protected clone(): IterableIterator<T[]> {
+    protected clone(): WindowIterable<T> {
         return new WindowIterable(this.source, this.size);
     }
 

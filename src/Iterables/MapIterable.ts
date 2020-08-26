@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from './IterableIterator';
 
-export class MapIterable<T, R> extends IterableIterator<R>{
+export class MapIterable<T, R> extends IterableIterator<R, MapIterable<T, R>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly transform: (value: T) => R;
@@ -12,7 +12,7 @@ export class MapIterable<T, R> extends IterableIterator<R>{
         this.transform = transform;
     }
 
-    protected clone(): IterableIterator<R> {
+    protected clone(): MapIterable<T, R> {
         return new MapIterable(this.source, this.transform);
     }
 
@@ -32,10 +32,10 @@ export class MapIterable<T, R> extends IterableIterator<R>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class MapArrayIterable<T, R> extends IterableIterator<R>{
+export class MapArrayIterable<T, R> extends IterableIterator<R, MapArrayIterable<T, R>>{
     private readonly source: T[];
-    private index: number;
     private readonly transform: (value: T) => R;
+    private index: number;
 
     constructor(array: T[], transform: (value: T) => R){
         super();
@@ -44,7 +44,7 @@ export class MapArrayIterable<T, R> extends IterableIterator<R>{
         this.index = 0;
     }
 
-    protected clone(): IterableIterator<R> {
+    protected clone(): MapArrayIterable<T, R> {
         return new MapArrayIterable(this.source, this.transform);
     }
 

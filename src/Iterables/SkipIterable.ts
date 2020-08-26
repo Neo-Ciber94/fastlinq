@@ -1,6 +1,6 @@
 import { IterableIterator } from "./IterableIterator";
 
-export class SkipIterable<T> extends IterableIterator<T>{
+export class SkipIterable<T> extends IterableIterator<T, SkipIterable<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly count: number;
@@ -18,7 +18,7 @@ export class SkipIterable<T> extends IterableIterator<T>{
         this.index = 0;
     }
 
-    protected clone(): IterableIterator<T> {
+    protected clone(): SkipIterable<T> {
         return new SkipIterable(this.source, this.count);
     }
 

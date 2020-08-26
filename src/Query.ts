@@ -6,7 +6,10 @@ import { KeyValue } from "./Iterables/KeyValue";
 import { RangeIterable } from "./Iterables/RangeIterable";
 import { RepeatIterable } from "./Iterables/RepeatIterable";
 
-export class Query{
+/**
+ * Helper class for `IQuery<T>`.
+ */
+export abstract class Query{
     private constructor(){}
 
     static from<T>(...values: T[]) : IQuery<T>{
@@ -61,7 +64,7 @@ declare global{
 }
 
 Map.prototype.asQuery = function<K,V>() : IQuery<KeyValue<K,V>>{
-    return new IterableQuery(this.entries()).map(KeyValue.from);
+    return new IterableQuery(this.entries()).map((e): KeyValue<K, V> => ({ key: e[0], value: e[1] }));
 }
 
 Array.prototype.asQuery = function<T>() : IQuery<T>{

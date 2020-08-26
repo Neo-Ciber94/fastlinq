@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone } from "./IterableIterator";
 
-export class TakeIterable<T> extends IterableIterator<T>{
+export class TakeIterable<T> extends IterableIterator<T, TakeIterable<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly count: number;
@@ -18,7 +18,7 @@ export class TakeIterable<T> extends IterableIterator<T>{
         this.index = 0;
     }
 
-    protected clone(): IterableIterator<T> {
+    protected clone(): TakeIterable<T> {
         return new TakeIterable(this.source, this.count);
     }
 

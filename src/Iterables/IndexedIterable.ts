@@ -5,7 +5,7 @@ export interface IndexedValue<T>{
     readonly index: number;
 }
 
-export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
+export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>, IndexedIterable<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private index: number = 0;
@@ -16,7 +16,7 @@ export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
         this.iterator = iterable[Symbol.iterator]();
     }
 
-    protected clone(): IterableIterator<IndexedValue<T>> {
+    protected clone(): IndexedIterable<T> {
         return new IndexedIterable(this.source);
     }
 

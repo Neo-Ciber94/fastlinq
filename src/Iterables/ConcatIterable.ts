@@ -1,6 +1,6 @@
 import { IterableIterator } from "./IterableIterator";
 
-export class ConcatIterable<T> extends IterableIterator<T> {
+export class ConcatIterable<T> extends IterableIterator<T, ConcatIterable<T>> {
     private readonly source: Iterable<T>;
     private readonly other: Iterable<T>;
     private iterator: Iterator<T>;
@@ -13,7 +13,7 @@ export class ConcatIterable<T> extends IterableIterator<T> {
         this.other = other;
     }
 
-    protected clone(): IterableIterator<T> {
+    protected clone(): ConcatIterable<T> {
         return new ConcatIterable(this.source, this.other);
     }
 

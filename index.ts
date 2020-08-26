@@ -4,19 +4,21 @@ import { measureTimeAndLog, measureAverageTimeAndLog, repeat } from './src/Itera
 
 const elements = [1,2,3,4,5];
 
-measureAverageTimeAndLog(() => {
-    for(let i = 0; i < elements.length; i++){
-        const value = dump(elements[i]);
-    }
-});
-
-measureAverageTimeAndLog(() => {
-   for (const e of elements) {
-       const value = dump(e);
-   }
-});
-
-
-function dump<T>(value: T) : T{
-    return value;
+interface IClone<This extends IClone<This>>{
+    clone() : This;
 }
+
+class Person implements IClone<Person>{
+    readonly name: string;
+
+    constructor(name: string){
+        this.name = name;
+    }
+
+    clone(): Person {
+        throw new Error('Method not implemented.');
+    }
+}
+
+const p = new Person("Fred");
+console.log(p.clone());

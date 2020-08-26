@@ -1,14 +1,14 @@
 
-export class KeyValue<K, V>{
+/**
+ * Represents `key` and `value` pair.
+ */
+export interface KeyValue<K, V>{
+    /**
+     * The key.
+     */
     readonly key: K;
+    /**
+     * The value.
+     */
     readonly value: V;
-
-    constructor(key: K, value: V){
-        this.key = key;
-        this.value = value;
-    }
-
-    static from<K,V>(pair: [K, V]) : KeyValue<K, V>{
-        return new KeyValue(pair[0], pair[1]);
-    }
 }

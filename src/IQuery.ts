@@ -35,6 +35,7 @@ export interface IQuery<T> extends Iterable<T>{
     sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>) : IQuery<T>;
     joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean) : IQuery<[T,R]>;
     zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult) : IQuery<TResult>;
+    defaultIfEmpty(defaultValue: Iterable<T>) : IQuery<T>;
     seek(f: (value: T) => void) : IQuery<T>;
     forEach(f: (value: T) => void) : void;
     reduce(f: (prev: T, current: T) => T) : T | undefined;

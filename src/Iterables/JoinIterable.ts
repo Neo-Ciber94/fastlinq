@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
+export class JoinIterable<T, R> extends IterableIterator<[T, R], JoinIterable<T, R>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly other: Iterable<R>
@@ -17,7 +17,7 @@ export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
         this.selector = selector;
     }
 
-    protected clone(): IterableIterator<[T, R]> {
+    protected clone(): JoinIterable<T, R> {
         return new JoinIterable(this.source, this.other, this.selector);
     }
 

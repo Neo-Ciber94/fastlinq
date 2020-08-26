@@ -582,6 +582,11 @@ test("IterableQuery.isSortedByDecending", () => {
     expect([1,3,2,5,4].asQuery().isSortedByDecending(e => e)).toBeFalsy();
 });
 
+test("IterableQuery.defaultIfEmpty", () => {
+    expect([1,2,3].asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,2,3]);
+    expect(new Array<number>().asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,1,1]);
+});
+
 test("IterableQuery.isEmpty", () => {
     expect(new Array<number>().asQuery().isEmpty()).toBeTruthy();
     expect([1].asQuery().isEmpty()).toBeFalsy();
@@ -632,6 +637,9 @@ test("IterableQuery.toString", () => {
     expect([1,2,3].asQuery().toString()).toStrictEqual("[1, 2, 3]");
     expect([1,2,3].asQuery().toString("-")).toStrictEqual("[1-2-3]");
     expect([1,2,3,4,5,6,7,8,9,10].asQuery().toString({limit: 5})).toStrictEqual("[1, 2, 3, 4, 5, ...]");
+
+    expect([1,2,3,4,5].asQuery().toString({limit: 10, separator: " - ", prefix: "{", postfix: "}", truncate: "and more"}))
+        .toStrictEqual("{1 - 2 - 3 - 4 - 5}");
 
     expect([1,2,3,4,5,6,7,8,9,10].asQuery().toString({limit: 5, separator: " - ", prefix: "{", postfix: "}", truncate: "and more"}))
         .toStrictEqual("{1 - 2 - 3 - 4 - 5 - and more}");

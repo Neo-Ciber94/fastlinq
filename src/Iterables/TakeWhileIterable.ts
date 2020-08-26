@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone } from "./IterableIterator";
 
-export class TakeWhileIterable<T> extends IterableIterator<T>{
+export class TakeWhileIterable<T> extends IterableIterator<T, TakeWhileIterable<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;
@@ -13,7 +13,7 @@ export class TakeWhileIterable<T> extends IterableIterator<T>{
         this.predicate = predicate;
     }
 
-    protected clone(): IterableIterator<T> {
+    protected clone(): TakeWhileIterable<T> {
         return new TakeWhileIterable(this.source, this.predicate);
     }
 

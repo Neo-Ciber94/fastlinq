@@ -241,6 +241,14 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return new IterableQuery(iterable);
     }
 
+    defaultIfEmpty(defaultValue: Iterable<T>): IQuery<T> {
+        if(this.isEmpty()){
+            return new IterableQuery(defaultValue);
+        }
+
+        return this;
+    }
+
     seek(f: (value: T) => void): IQuery<T> {
         this.forEach(f);
         return this;

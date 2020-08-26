@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class AppendPrependIterator<T> extends IterableIterator<T>{
+export class AppendPrependIterator<T> extends IterableIterator<T, AppendPrependIterator<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly append: boolean;
@@ -15,7 +15,7 @@ export class AppendPrependIterator<T> extends IterableIterator<T>{
         this.append = append;
     }
 
-    protected clone(): IterableIterator<T> {
+    protected clone(): AppendPrependIterator<T> {
         return new AppendPrependIterator(this.source, this.item, this.append);
     }
 
