@@ -1,6 +1,6 @@
 /* tslint:disable:unified-signatures */
 import { Compare } from "./Compare";
-import { IndexedValue } from "./IndexedIterable";
+import { IndexedValue } from "./Iterables/IndexedIterable"
 
 /**
  * Provide a set of methods for query over the elements of an Iterable.

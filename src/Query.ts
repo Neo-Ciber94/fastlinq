@@ -1,9 +1,10 @@
 import { IQuery } from "./IQuery";
-import { IterableGenerator } from "./IterableGenerator";
-import { ArrayQuery, IterableQuery } from "./IterableQuery";
-import { KeyValue } from "./KeyValue";
-import { RangeIterable } from "./RangeIterable";
-import { RepeatIterable } from "./RepeatIterable";
+import { IterableQuery } from "./IterableQuery";
+import { IterableArrayQuery } from "./IterableArrayQuery";
+import { IterableGenerator } from "./Iterables/IterableGenerator";
+import { KeyValue } from "./Iterables/KeyValue";
+import { RangeIterable } from "./Iterables/RangeIterable";
+import { RepeatIterable } from "./Iterables/RepeatIterable";
 
 export class Query{
     private constructor(){}
@@ -64,7 +65,7 @@ Map.prototype.asQuery = function<K,V>() : IQuery<KeyValue<K,V>>{
 }
 
 Array.prototype.asQuery = function<T>() : IQuery<T>{
-    return new ArrayQuery(this);
+    return new IterableArrayQuery(this);
 }
 
 Set.prototype.asQuery = function<T>() : IQuery<T>{
