@@ -2,16 +2,17 @@
 /* tslint:disable: max-classes-per-file */
 
 import { IQuery, ToStringOptions} from "./IQuery";
+import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Comparable";
 import { MapIterable } from "./MapIterable";
 import { FlatMapIterable } from "./FlatMapIterable";
 import { WhereIterable } from "./WhereIterable";
-import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Comparable";
 import { SkipIterable } from "./SkipIterable";
 import { TakeIterable } from "./TakeIterable";
 import { SkipWhileIterable } from "./SkipWhileIterable";
 import { TakeWhileIterable } from "./TakeWhileIterable";
+import { AppendPrependIterator } from "./AppendPredendIterable";
+import { ConcatIterable } from "./ConcatIterable";
 import { IndexedIterable, IndexedValue } from "./IndexedIterable";
-import { AppendIterable, ConcatIterable, PrependIterable } from "./ConcatIterable";
 import { ChunkIterable } from "./ChunkIterable";
 import { WindowIterable } from "./WindowIterable";
 import { ZipIterable } from "./ZipIterable";
@@ -57,12 +58,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     append(value: T): IQuery<T> {
-        const iterable = new AppendIterable(this, value);
+        const iterable = new AppendPrependIterator(this, value, true);
         return new IterableQuery(iterable);
     }
 
     prepend(value: T): IQuery<T> {
-        const iterable = new PrependIterable(this, value);
+        const iterable = new AppendPrependIterator(this, value, false);
         return new IterableQuery(iterable);
     }
 
@@ -159,7 +160,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     sort(compare?: any) {
         const array = this.toArray();
         if(compare){
-            const sorted = array.sort((x, y) => compare(y, x));
+            const sorted = array.sort((x, y) => compare(x, y));
             return new IterableQuery(sorted);
         }
         else{
@@ -184,7 +185,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     sortBy<K>(keySelector: (value: T) => K): IQuery<T>;
-    sortBy<K>(keySelector: (value: T) => K, compare: Compare<T>): IQuery<T>;
+    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>): IQuery<T>;
     sortBy(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -208,7 +209,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     sortByDecending<K>(keySelector: (value: T) => K): IQuery<T>;
-    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<T>): IQuery<T>;
+    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>): IQuery<T>;
     sortByDecending(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -253,7 +254,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     reduce(f: (prev: T, current: T) => T): T | undefined;
-    reduce(f: (prev: T, current: T) => T, seed: T): T | undefined;
+    reduce(f: (prev: T, current: T) => T, seed: T): T;
     reduce(f: any, seed?: any) {
         const iterator = this[Symbol.iterator]();
         let result : T = seed;
@@ -262,9 +263,6 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             const next = iterator.next();
             if(!next.done){
                 result = next.value;
-            }
-            else{
-                return undefined;
             }
         }
 
@@ -281,9 +279,9 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return result!;
     }
 
-    fold<R>(seed: R, combine: (prev: R, current: T) => R): R | undefined {
+    fold<R>(seed: R, combine: (prev: R, current: T) => R): R {
         if(this.isEmpty()){
-            return undefined;
+            return seed;
         }
 
         let result = seed;

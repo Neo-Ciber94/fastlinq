@@ -1,57 +1,33 @@
-/* tslint:disable: max-classes-per-file */
+import { IterableIterator } from "./IterableIterator";
 
-export class ConcatIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
-    private readonly source: Iterable<T>
+export class ConcatIterable<T> extends IterableIterator<T> {
+    private readonly source: Iterable<T>;
+    private readonly other: Iterable<T>;
+    private iterator: Iterator<T>;
+    private isOther: boolean = false;
 
-    constructor(iterable: Iterable<T>, source: Iterable<T>){
-        this.iterable = iterable;
-        this.source = source;
+    constructor(iterable: Iterable<T>, other: Iterable<T>) {
+        super();
+        this.source = iterable;
+        this.iterator = iterable[Symbol.iterator]();
+        this.other = other;
     }
 
-    *[Symbol.iterator](): Iterator<T, any, undefined> {
-        for (const e of this.iterable) {
-            yield e;
+    protected clone(): IterableIterator<T> {
+        return new ConcatIterable(this.source, this.other);
+    }
+
+    protected getNext(): IteratorResult<T, any> {
+        const next = this.iterator.next();
+
+        if(next.done){
+            if(!this.isOther){
+                this.iterator = this.other[Symbol.iterator]();
+                this.isOther = true;
+                return this.getNext();
+            }
         }
 
-        for (const e of this.source) {
-            yield e;
-        }
-    }
-}
-
-export class AppendIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
-    private readonly item: T;
-
-    constructor(iterable: Iterable<T>, item: T){
-        this.iterable = iterable;
-        this.item = item;
-    }
-
-    *[Symbol.iterator](): Iterator<T, any, undefined> {
-        for (const e of this.iterable) {
-            yield e;
-        }
-
-        yield this.item;
-    }
-}
-
-export class PrependIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
-    private readonly item: T;
-
-    constructor(iterable: Iterable<T>, item: T){
-        this.iterable = iterable;
-        this.item = item;
-    }
-
-    *[Symbol.iterator](): Iterator<T, any, undefined> {
-        yield this.item;
-
-        for (const e of this.iterable) {
-            yield e;
-        }
+        return next;
     }
 }

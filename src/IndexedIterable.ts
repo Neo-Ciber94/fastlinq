@@ -1,48 +1,35 @@
+import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
 export interface IndexedValue<T>{
     readonly value: T;
     readonly index: number;
 }
 
-export class IndexedIterable<T> implements Iterable<IndexedValue<T>>{
-    private readonly iterable: Iterable<T>;
-
-    constructor(iterable: Iterable<T>){
-        this.iterable = iterable;
-    }
-
-    [Symbol.iterator](): Iterator<IndexedValue<T>, any, undefined> {
-        return new IndexedIterator(this.iterable);
-    }
-}
-
-// tslint:disable-next-line: max-classes-per-file
-class IndexedIterator<T> implements Iterator<IndexedValue<T>>{
+export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
+    private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
-    private index: number;
+    private index: number = 0;
 
     constructor(iterable: Iterable<T>){
+        super();
+        this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
-        this.index = 0;
     }
 
-    next() : IteratorResult<IndexedValue<T>>{
-        const next = this.iterator.next();
-        if(next.done){
-            return {
-                value: undefined,
-                done: true
-            };
-        }
-        else{
-            const item : IndexedValue<T> = {
-                value: next.value,
-                index: this.index++
-            };
+    protected clone(): IterableIterator<IndexedValue<T>> {
+        return new IndexedIterable(this.source);
+    }
 
-            return {
-                value: item
-            }
+    protected getNext(): IteratorResult<IndexedValue<T>, any> {
+        const next = this.iterator.next();
+
+        if(next.done){
+            return iteratorDone();
         }
+
+        return iteratorResult({
+            value: next.value,
+            index: this.index++
+        });
     }
 }

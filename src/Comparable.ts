@@ -2,8 +2,8 @@ export type Compare<T> = (x: T, y: T) => Ordering;
 
 export enum Ordering{
     Less = -1,
+    Equals = 0,
     Greater = 1,
-    Equals = 0
 }
 
 export function compare(x: any, y: any) : Ordering | undefined{

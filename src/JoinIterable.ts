@@ -1,30 +1,50 @@
+import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class JoinIterable<T, R> implements Iterable<[T, R]>{
-    private readonly iterable: Iterable<T>;
+export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
+    private readonly source: Iterable<T>;
+    private readonly iterator: Iterator<T>;
     private readonly other: Iterable<R>
     private readonly selector: (x: T, y: R) => boolean;
 
+    private current?: IteratorResult<T>;
+    private otherIterator?: Iterator<R>;
+
     constructor(iterable: Iterable<T>, other: Iterable<R>, selector: (x: T, y: R) => boolean){
-        this.iterable = iterable;
+        super();
+        this.source = iterable;
+        this.iterator = iterable[Symbol.iterator]();
         this.other = other;
         this.selector = selector;
     }
 
-    *[Symbol.iterator](): Iterator<[T, R], any, undefined> {
-        const left = this.iterable[Symbol.iterator]();
-        const right = this.other[Symbol.iterator]();
+    protected clone(): IterableIterator<[T, R]> {
+        return new JoinIterable(this.source, this.other, this.selector);
+    }
 
-        while(true){
-            const x = left.next();
-            const y = right.next();
+    protected getNext(): IteratorResult<[T, R], any> {
+        if(this.current?.done){
+            return iteratorDone();
+        }
 
-            if(x.done || y.done){
-                break;
+        if(!this.otherIterator){
+            this.current = this.iterator.next();
+            if(this.current.done){
+                return iteratorDone();
             }
             else{
-                if(this.selector(x.value, y.value)){
-                    yield [x.value, y.value];
-                }
+                this.otherIterator = this.other[Symbol.iterator]();
+            }
+        }
+
+        while(true){
+            const otherNext = this.otherIterator.next();
+            if(otherNext.done){
+                this.otherIterator = undefined;
+                return this.getNext();
+            }
+
+            if(this.selector(this.current!.value, otherNext.value)){
+                return iteratorResult([this.current!.value, otherNext.value]);
             }
         }
     }

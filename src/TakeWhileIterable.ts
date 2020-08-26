@@ -1,21 +1,39 @@
+import { IterableIterator, iteratorDone } from "./IterableIterator";
 
-export class TakeWhileIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
+export class TakeWhileIterable<T> extends IterableIterator<T>{
+    private readonly source: Iterable<T>;
+    private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;
+    private hasNext: boolean = true;
 
     constructor(iterable: Iterable<T>, predicate: (value: T) => boolean){
-        this.iterable = iterable;
+        super();
+        this.source = iterable;
+        this.iterator = iterable[Symbol.iterator]();
         this.predicate = predicate;
     }
 
-    *[Symbol.iterator](): Iterator<T, any, undefined> {
-        for (const e of this.iterable) {
-            if(this.predicate(e)){
-                yield e;
+    protected clone(): IterableIterator<T> {
+        return new TakeWhileIterable(this.source, this.predicate);
+    }
+
+    protected getNext(): IteratorResult<T, any> {
+        if(this.hasNext){
+            const next = this.iterator.next();
+
+            if(next.done){
+                this.hasNext = false;
+                return iteratorDone();
+            }
+
+            if(this.predicate(next.value)){
+                return next;
             }
             else{
-                break;
+                this.hasNext = false;
             }
         }
+
+        return iteratorDone();
     }
 }

@@ -1,35 +1,43 @@
+import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WindowIterable<T> implements Iterable<T[]> {
-    private readonly iterable: Iterable<T>;
+export class WindowIterable<T> extends IterableIterator<T[]> {
+    private readonly source: Iterable<T>;
+    private readonly elements: T[];
     private readonly size: number;
+    private index: number;
 
     constructor(iterable: Iterable<T>, size: number) {
         if(size <= 0){
             throw new Error("Invalid window size, should be greater than 0: " +size);
         }
 
-        this.iterable = iterable;
+        super();
+        this.source = iterable;
+        this.elements = Array.from(iterable);
         this.size = size;
+        this.index = 0;
     }
 
-    *[Symbol.iterator](): Iterator<T[], any, undefined> {
-        const elements = Array.from(this.iterable);
-        let array = new Array<T>();
-        let count = 0;
+    protected clone(): IterableIterator<T[]> {
+        return new WindowIterable(this.source, this.size);
+    }
 
-        for(let i = 0; i < elements.length; i++){
-            const elementsLeft = elements.length - i;
-            const size = Math.min(this.size, elementsLeft);
+    protected getNext(): IteratorResult<T[], any> {
+        if((this.index + this.size) <= this.elements.length){
+            const array = new Array<T>();
+            const remaining = this.elements.length - this.index;
+            const length = Math.min(this.size, remaining);
 
-            for(let j = 0; j < size; j++){
-                const item = elements[j + i];
-                array.push(item);
+            for(let i = 0; i < length; i++){
+                const value = this.elements[this.index + i];
+                array.push(value);
             }
 
-            yield array;
-            array = new Array<T>();
-            count = 0;
+            this.index += 1;
+            return iteratorResult(array);
+        }
+        else{
+            return iteratorDone();
         }
     }
 }
-
