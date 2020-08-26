@@ -54,21 +54,23 @@ export interface IQuery<T> extends Iterable<T>{
     lastIndexOf(value: T) : number | undefined;
     first() : T | undefined;
     last() : T | undefined;
-    find(f: (value: T) => boolean) : T | undefined;
-    findLast(f: (value: T) => boolean) : T | undefined;
-    findIndex(f: (value: T) => boolean) : number | undefined;
-    findLastIndex(f: (value: T) => boolean) : number | undefined;
-    findIndices(f: (value: T) => boolean) : number[]
+    find(predicate: (value: T) => boolean) : T | undefined;
+    findLast(predicate: (value: T) => boolean) : T | undefined;
+    findIndex(predicate: (value: T) => boolean) : number | undefined;
+    findLastIndex(predicate: (value: T) => boolean) : number | undefined;
+    findIndices(predicate: (value: T) => boolean) : number[]
     single() : T | undefined;
-    single(f: (value: T) => boolean) : T | undefined;
-    every(f: (value: T) => boolean) : boolean;
-    any(f: (value: T) => boolean) : boolean;
+    single(predicate: (value: T) => boolean) : T | undefined;
+    every(predicate: (value: T) => boolean) : boolean;
+    any() : boolean;
+    any(predicate: (value: T) => boolean) : boolean;
     isSorted() : boolean;
     isSortedDecending() : boolean;
     isSortedBy<R>(keySelector: (value: T) => R) : boolean;
     isSortedByDecending<R>(keySelector: (value: T) => R) : boolean;
     isEmpty() : boolean;
     count() : number;
+    count(predicate: (value: T) => boolean) : number;
     groupBy<K>(keySelector: (value: T) => K) : Map<K, T[]>;
     toArray() : T[];
     toSet() : Set<T>;

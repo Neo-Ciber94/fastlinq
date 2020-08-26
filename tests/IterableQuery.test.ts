@@ -1,5 +1,6 @@
 import { Ordering } from "../src/Compare";
 import { IQuery } from "../src/IQuery";
+import { IterableQuery } from "../src/IterableQuery";
 import "../src/Query";
 
 test('IterableQuery.map', () => {
@@ -445,4 +446,193 @@ test("IteratorQuery.sequenceEquals", () => {
     expect(elements.sequenceEquals([1,2,3,4,5])).toBeTruthy();
     expect(elements.sequenceEquals([1,2,3,4,5,6])).toBeFalsy();
     expect(elements.sequenceEquals([1,2,3,4])).toBeFalsy();
+});
+
+test("IterableQuery.elementAt", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.elementAt(0)).toStrictEqual(1);
+    expect(elements.elementAt(1)).toStrictEqual(2);
+    expect(elements.elementAt(2)).toStrictEqual(3);
+    expect(elements.elementAt(3)).toStrictEqual(4);
+    expect(elements.elementAt(4)).toStrictEqual(5);
+});
+
+test("IterableQuery.indexOf", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.indexOf(1)).toStrictEqual(0);
+    expect(elements.indexOf(2)).toStrictEqual(1);
+    expect(elements.indexOf(3)).toStrictEqual(2);
+    expect(elements.indexOf(4)).toStrictEqual(3);
+    expect(elements.indexOf(5)).toStrictEqual(4);
+});
+
+test("IterableQuery.lastIndexOf", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.lastIndexOf(1)).toStrictEqual(0);
+    expect(elements.lastIndexOf(2)).toStrictEqual(1);
+    expect(elements.lastIndexOf(3)).toStrictEqual(2);
+    expect(elements.lastIndexOf(4)).toStrictEqual(3);
+    expect(elements.lastIndexOf(5)).toStrictEqual(4);
+});
+
+test("IterableQuery.first", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.first()).toStrictEqual(1);
+    expect(new Array<number>().asQuery().first()).toBeUndefined();
+});
+
+test("IterableQuery.last", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.last()).toStrictEqual(5);
+    expect(new Array<number>().asQuery().last()).toBeUndefined();
+});
+
+test("IterableQuery.find", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.find(e => e === 3)).toStrictEqual(3);
+    expect(new Array<number>().asQuery().find(e => e === 3)).toBeUndefined();
+});
+
+test("IterableQuery.findLast", () => {
+    const elements = [1,2,3,4,3,5].asQuery();
+
+    expect(elements.findLast(e => e > 3)).toStrictEqual(5);
+    expect(new Array<number>().asQuery().findLast(e => e === 3)).toBeUndefined();
+});
+
+test("IterableQuery.find with predicate", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.find(e => e === 3)).toStrictEqual(3);
+    expect(new Array<number>().asQuery().find(e => e === 3)).toBeUndefined();
+});
+
+test("IterableQuery.findIndex", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.findIndex(e => e === 3)).toStrictEqual(2);
+    expect(new Array<number>().asQuery().findIndex(e => e === 3)).toBeUndefined();
+});
+
+test("IterableQuery.findLastIndex with predicate", () => {
+    const elements = [1,2,3,4,1,5].asQuery();
+
+    expect(elements.findLastIndex(e => e === 1)).toStrictEqual(4);
+    expect(new Array<number>().asQuery().findLastIndex(e => e === 2)).toBeUndefined();
+});
+
+test("IterableQuery.findIndices", () => {
+    const elements = [1,2,3,4,5];
+    const indices = elements.asQuery().findIndices(e => e % 2 === 0);
+    expect(indices).toStrictEqual([1,3]);
+});
+
+test("IterableQuery.single", () => {
+    expect([1,2,3,4,5].asQuery().single()).toBeUndefined();
+    expect([1,2].asQuery().single()).toBeUndefined();
+    expect([1].asQuery().single()).toStrictEqual(1);
+    expect(new Array<number>().asQuery().single()).toBeUndefined();
+});
+
+test("IterableQuery.single with predicate", () => {
+    expect([1,2,3,4,5].asQuery().single(e => e === 3)).toStrictEqual(3);
+    expect([1,1,2,2,3,3,4,4,5,5].asQuery().single(e => e === 2)).toBeUndefined();
+    expect(new Array<number>().asQuery().single()).toBeUndefined();
+});
+
+test("IterableQuery.every", () => {
+    expect([1,2,3,4].asQuery().every(e => e > 0)).toBeTruthy();
+    expect([1,2,3,4].asQuery().every(e => e > 2)).toBeFalsy();
+});
+
+test("IterableQuery.any", () => {
+    expect([1,2,3,4].asQuery().any()).toBeTruthy();
+    expect([1,2,3,4].asQuery().any(e => e > 2)).toBeTruthy();
+    expect([1,2,3,4].asQuery().any(e => e > 5)).toBeFalsy();
+    expect(new Array<number>().asQuery().any(e => e > 2)).toBeFalsy();
+});
+
+test("IterableQuery.isSorted", () => {
+    expect([1,2,3,4,5].asQuery().isSorted()).toBeTruthy();
+    expect([1,2,3].asQuery().isSorted()).toBeTruthy();
+    expect([1,3,2,5,4].asQuery().isSorted()).toBeFalsy();
+});
+
+test("IterableQuery.isSortedDecending", () => {
+    expect([5,4,3,2,1].asQuery().isSortedDecending()).toBeTruthy();
+    expect([3,2,1].asQuery().isSortedDecending()).toBeTruthy();
+    expect([1,3,2,5,4].asQuery().isSortedDecending()).toBeFalsy();
+});
+
+test("IterableQuery.isSortedBy", () => {
+    expect([1,2,3,4,5].asQuery().isSortedBy(e => e)).toBeTruthy();
+    expect([1,2,3].asQuery().isSortedBy(e => e)).toBeTruthy();
+    expect([1,3,2,5,4].asQuery().isSortedBy(e => e)).toBeFalsy();
+});
+
+test("IterableQuery.isSortedByDecending", () => {
+    expect([5,4,3,2,1].asQuery().isSortedByDecending(e => e)).toBeTruthy();
+    expect([3,2,1].asQuery().isSortedByDecending(e => e)).toBeTruthy();
+    expect([1,3,2,5,4].asQuery().isSortedByDecending(e => e)).toBeFalsy();
+});
+
+test("IterableQuery.isEmpty", () => {
+    expect(new Array<number>().asQuery().isEmpty()).toBeTruthy();
+    expect([1].asQuery().isEmpty()).toBeFalsy();
+    expect([1,2,3].asQuery().isEmpty()).toBeFalsy();
+});
+
+test("IterableQuery.count", () => {
+    expect([1,2,3].asQuery().count()).toStrictEqual(3);
+    expect(new Array<number>().asQuery().count()).toStrictEqual(0);
+    expect(new IterableQuery([1,2,3]).count()).toStrictEqual(3);
+});
+
+test("IterableQuery.count with predicate", () => {
+    expect([1,2,3,4,5].asQuery().count(e => e > 2)).toStrictEqual(3);
+    expect([1,2,3,4,5].asQuery().count(e => e > 5)).toStrictEqual(0);
+    expect(new IterableQuery([1,2,3]).count(e => e > 1)).toStrictEqual(2);
+});
+
+test("IterableQuery.groupBy", () => {
+    const elements = ["apple", "avocado", "banana", "blueberry", "cherry"].asQuery();
+
+    const result = elements.groupBy(e => e[0]);
+    expect(result.get("a")).toStrictEqual(["apple", "avocado"]);
+    expect(result.get("b")).toStrictEqual(["banana", "blueberry"]);
+    expect(result.get("c")).toStrictEqual(["cherry"]);
+});
+
+test("IterableQuery.toArray", () => {
+    const elements = [1,2,3,4];
+    expect(elements.asQuery().toArray()).toStrictEqual([1,2,3,4]);
+});
+
+test("IterableQuery.toSet", () => {
+    const elements = [1,2,2,3,3,3,4];
+    expect(elements.asQuery().toSet()).toStrictEqual(new Set([1,2,3,4]));
+});
+
+test("IterableQuery.toMap", () => {
+    const elements = [1, 2, 3];
+
+    const result = elements.asQuery().toMap(e => `#${e}`);
+    expect(result.get("#1")).toStrictEqual(1);
+    expect(result.get("#2")).toStrictEqual(2);
+    expect(result.get("#3")).toStrictEqual(3);
+});
+
+test("IterableQuery.toString", () => {
+    expect([1,2,3].asQuery().toString()).toStrictEqual("[1, 2, 3]");
+    expect([1,2,3].asQuery().toString("-")).toStrictEqual("[1-2-3]");
+    expect([1,2,3,4,5,6,7,8,9,10].asQuery().toString({limit: 5})).toStrictEqual("[1, 2, 3, 4, 5, ...]");
+
+    expect([1,2,3,4,5,6,7,8,9,10].asQuery().toString({limit: 5, separator: " - ", prefix: "{", postfix: "}", truncate: "and more"}))
+        .toStrictEqual("{1 - 2 - 3 - 4 - 5 - and more}");
 });

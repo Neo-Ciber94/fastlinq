@@ -18,15 +18,33 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> {
     }
 
     last(): T | undefined {
-        return this.array[length - 1];
+        return this.array[this.array.length - 1];
     }
 
-    single(): T | undefined {
-        if (this.array.length > 0) {
-            return undefined;
+    single(predicate?: any){
+        if(predicate){
+            let result : T | undefined;
+            const array = this.array;
+            // tslint:disable-next-line: prefer-for-of
+            for(let i = 0; i < array.length; i++){
+                if(predicate(array[i])){
+                    if(result){
+                        return undefined;
+                    }
+                    else{
+                        result = array[i];
+                    }
+                }
+            }
+            return result;
         }
-        else {
-            return this.array[0];
+        else{
+            if (this.array.length > 1) {
+                return undefined;
+            }
+            else {
+                return this.array[0];
+            }
         }
     }
 
@@ -34,8 +52,21 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> {
         return this.array[index];
     }
 
-    count(): number {
-        return this.array.length;
+    count(predicate?: any): number {
+        if(predicate){
+            const array = this.array;
+            let count = 0;
+            // tslint:disable-next-line: prefer-for-of
+            for (let i = 0; i < array.length; i++) {
+                if(predicate(array[i])){
+                    count += 1;
+                }
+            }
+            return count;
+        }
+        else{
+            return this.array.length;
+        }
     }
 
     isEmpty(): boolean {

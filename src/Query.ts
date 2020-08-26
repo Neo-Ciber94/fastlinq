@@ -10,7 +10,7 @@ export class Query{
     private constructor(){}
 
     static from<T>(...values: T[]) : IQuery<T>{
-        return new IterableQuery(values);
+        return new IterableArrayQuery(values);
     }
 
     static fromIterable<T>(iterable: Iterable<T>) : IQuery<T>{
@@ -18,7 +18,7 @@ export class Query{
     }
 
     static empty<T>() : IQuery<T>{
-        return new IterableQuery(new Array<T>(0));
+        return new IterableArrayQuery(new Array<T>(0));
     }
 
     static range(start: number, end: number, step: number = 1) : IQuery<number>{

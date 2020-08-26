@@ -1,3 +1,4 @@
+/* tslint:disable: unified-signatures */
 import { IQuery, ToStringOptions } from "./IQuery";
 import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Compare";
 import { MapIterable } from "./Iterables/MapIterable";
@@ -443,7 +444,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             return undefined;
         }
 
-        let lastIndex = 0;
+        let lastIndex : number | undefined;
         let index = 0;
         for (const e of this) {
             if (e === value) {
@@ -471,66 +472,64 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return last;
     }
 
-    find(f: (value: T) => boolean): T | undefined {
+    find(predicate: (value: T) => boolean): T | undefined {
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 return e;
             }
         }
     }
 
-    findLast(f: (value: T) => boolean): T | undefined {
+    findLast(predicate: (value: T) => boolean): T | undefined {
         let last: T | undefined;
 
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 last = e;
             }
         }
         return last;
     }
 
-    findIndex(f: (value: T) => boolean): number | undefined {
+    findIndex(predicate: (value: T) => boolean): number | undefined {
         if (this.isEmpty()) {
             return undefined;
         }
 
         let index = 0;
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 return index;
             }
-            else {
-                index += 1;
-            }
+
+            index += 1;
         }
 
         return index;
     }
 
-    findLastIndex(f: (value: T) => boolean): number | undefined {
+    findLastIndex(predicate: (value: T) => boolean): number | undefined {
         if (this.isEmpty()) {
             return undefined;
         }
 
-        let lastIndex = 0;
+        let lastIndex : number | undefined;
         let index = 0;
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 lastIndex = index;
             }
-            else {
-                index += 1;
-            }
+
+            index += 1;
         }
         return lastIndex;
     }
 
-    findIndices(f: (value: T) => boolean): number[] {
+    findIndices(predicate: (value: T) => boolean): number[] {
         const array = new Array<number>();
         let index = 0;
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 array.push(index);
             }
 
@@ -540,31 +539,39 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     single(): T | undefined;
-    single(f: (value: T) => boolean): T | undefined;
-    single(f?: any) {
-        let result: T;
+    single(predicate: (value: T) => boolean): T | undefined;
+    single(predicate?: any) {
+        let result: T | undefined;
 
-        for (const e of this) {
-            if (f !== undefined) {
-                return undefined;
+        if(predicate){
+            for(const e of this){
+                if(predicate(e)){
+                    if(!result){
+                        result = e;
+                    }
+                    else{
+                        return undefined;
+                    }
+                }
             }
-
-            if (f === null) {
-                result = e;
-            }
-            else {
-                if (f(e)) {
+        }
+        else{
+            for (const e of this) {
+                if(!result){
                     result = e;
+                }
+                else{
+                    return undefined;
                 }
             }
         }
 
-        return result!;
+        return result;
     }
 
-    every(f: (value: T) => boolean): boolean {
+    every(predicate: (value: T) => boolean): boolean {
         for (const e of this) {
-            if (!f(e)) {
+            if (!predicate(e)) {
                 return false;
             }
         }
@@ -572,11 +579,18 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return true;
     }
 
-    any(f: (value: T) => boolean): boolean {
-        for (const e of this) {
-            if (f(e)) {
-                return true;
+    any() : boolean;
+    any(predicate: (value: T) => boolean): boolean;
+    any(predicate?: any){
+        if(predicate){
+            for (const e of this) {
+                if(predicate(e)){
+                    return true;
+                }
             }
+        }
+        else{
+            return !this.isEmpty();
         }
 
         return false;
@@ -656,13 +670,25 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return true;
     }
 
-    count(): number {
-        let count = 0;
-        for (const _ of this) {
-            count += 1;
+    count(): number;
+    count(predicate: (value: T) => boolean) : number;
+    count(predicate?: any) {
+        if(predicate){
+            let count = 0;
+            for (const e of this) {
+                if(predicate(e)){
+                    count += 1;
+                }
+            }
+            return count;
         }
-
-        return count;
+        else{
+            let count = 0;
+            for (const _ of this) {
+                count += 1;
+            }
+            return count;
+        }
     }
 
     groupBy<K>(keySelector: (value: T) => K): Map<K, T[]> {
@@ -708,7 +734,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
 export function iterableToString(iterable: any, options: ToStringOptions) : string{
     const separator = typeof options === 'string'? options : options?.separator?? ", ";
     const prefix = options?.prefix?? "[";
-    const postfix = options?.prefix?? "]";
+    const postfix = options?.postfix?? "]";
     const limit = options?.limit?? Number.MAX_VALUE;
     const truncate = options?.truncate?? "...";
 
@@ -741,7 +767,7 @@ export function iterableToString(iterable: any, options: ToStringOptions) : stri
 
         count += 1;
 
-        if(count > limit){
+        if(count >= limit){
             result += truncate;
             break;
         }
