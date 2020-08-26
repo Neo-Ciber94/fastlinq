@@ -1,46 +1,36 @@
+import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WhereIterable<T> implements Iterable<T> {
-    private readonly iterable: Iterable<T>;
-    private readonly predicate: (value: T) => boolean;
-
-    constructor(iterable: Iterable<T>, predicate: (value: T) => boolean) {
-        this.iterable = iterable;
-        this.predicate = predicate;
-    }
-
-    [Symbol.iterator](): Iterator<T, any, undefined> {
-        return new WhereIterator(this.iterable, this.predicate);
-    }
-}
-
-// tslint:disable-next-line: max-classes-per-file
-class WhereIterator<T> implements Iterator<T>{
+export class WhereIterable<T> extends IterableIterator<T> {
+    private readonly source: Iterable<T>
     private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;
 
     constructor(iterable: Iterable<T>, predicate: (value: T) => boolean) {
+        super();
+
+        this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.predicate = predicate;
     }
 
-    next() : IteratorResult<T>{
+    protected clone(): IterableIterator<T> {
+        return new WhereIterable(this.source, this.predicate);
+    }
+
+    protected getNext(): IteratorResult<T, any> {
         while(true){
             const next = this.iterator.next();
 
             if(next.done){
-                return {
-                    value: undefined,
-                    done: true
-                };
+                break;
             }
-            else{
-                const value = next.value;
-                if(this.predicate(value)){
-                    return {
-                        value
-                    }
-                }
+
+            const value = next.value;
+            if(this.predicate(value)){
+                return iteratorResult(value);
             }
         }
+
+        return iteratorDone();
     }
 }

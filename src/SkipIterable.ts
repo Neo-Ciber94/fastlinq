@@ -1,56 +1,35 @@
+import { IterableIterator } from "./IterableIterator";
 
-export class SkipIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
+export class SkipIterable<T> extends IterableIterator<T>{
+    private readonly source: Iterable<T>;
+    private readonly iterator: Iterator<T>;
     private readonly count: number;
+    private index: number;
 
     constructor(iterable: Iterable<T>, count: number){
         if(count < 0){
             throw new Error("Invalid argument: " +count);
         }
 
-        this.iterable = iterable;
-        this.count = count;
-    }
-
-    [Symbol.iterator](): Iterator<T, any, undefined>{
-        return new SkipIterator(this.iterable, this.count);
-    }
-}
-
-// tslint:disable-next-line: max-classes-per-file
-class SkipIterator<T> implements Iterator<T>{
-    private readonly iterator: Iterator<T>;
-    private readonly count: number;
-    private index: number;
-
-    constructor(iterable: Iterable<T>, count: number){
+        super();
+        this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.count = count;
         this.index = 0;
     }
 
-    next() : IteratorResult<T>{
+    protected clone(): IterableIterator<T> {
+        return new SkipIterable(this.source, this.count);
+    }
+
+    protected getNext(): IteratorResult<T, any> {
         let next = this.iterator.next();
-        if(next.done){
-            return {
-                value: undefined,
-                done: true
-            };
-        }
 
         while(this.index < this.count){
             next = this.iterator.next();
-            if(next.done){
-                return {
-                    value: undefined,
-                    done: true
-                };
-            }
             this.index += 1;
         }
 
-        return {
-            value: next.value
-        };
+        return next;
     }
 }

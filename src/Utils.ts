@@ -14,8 +14,8 @@ export function measureTime(f: () => void) : number{
     return end - start;
 }
 
-export function measureAverageTimeAndLog(f: () => void, repeat: number = 100, precision: number = 4){
-    if(repeat <= 0){
+export function measureAverageTimeAndLog(f: () => void, n: number = 100, precision: number = 4){
+    if(n <= 0){
         throw new Error("repeat should be greater than 0");
     }
 
@@ -26,7 +26,7 @@ export function measureAverageTimeAndLog(f: () => void, repeat: number = 100, pr
         measureTime(f);
     }
 
-    for(let i = 0; i < repeat; i++){
+    for(let i = 0; i < n; i++){
         const ms = measureTime(f);
         times.push(ms);
     }
@@ -43,8 +43,8 @@ export function measureAverageTimeAndLog(f: () => void, repeat: number = 100, pr
     });
 }
 
-export function measureTimeAndLog(f: () => void, repeat: number = 1, precision: number = 4){
-    if(repeat <= 0){
+export function measureTimeAndLog(f: () => void, n: number = 1, precision: number = 4){
+    if(n <= 0){
         throw new Error("repeat should be greater than 0");
     }
 
@@ -54,7 +54,7 @@ export function measureTimeAndLog(f: () => void, repeat: number = 1, precision: 
     measureTime(f);
     measureTime(f);
 
-    for(let i = 0; i < repeat; i++){
+    for(let i = 0; i < n; i++){
         const ms = measureTime(f);
         times.push(ms);
     }

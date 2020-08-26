@@ -1,25 +1,34 @@
+import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class SkipWhileIterable<T> implements Iterable<T>{
-    private readonly iterable: Iterable<T>;
+export class SkipWhileIterable<T> extends IterableIterator<T>{
+    private readonly source: Iterable<T>;
+    private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;
+    private skip: boolean = true;
 
     constructor(iterable: Iterable<T>, predicate: (value: T) => boolean){
-        this.iterable = iterable;
+        super();
+        this.source = iterable;
+        this.iterator = iterable[Symbol.iterator]();
         this.predicate = predicate;
     }
 
-    *[Symbol.iterator](): Iterator<T, any, undefined> {
-        let skip = true;
+    protected clone(): IterableIterator<T> {
+        return new SkipWhileIterable(this.source, this.predicate);
+    }
 
-        for (const e of this.iterable) {
-            if(skip){
-                if(!this.predicate(e)){
-                    skip = false;
-                }
-            }
-            else{
-                yield e;
-            }
+    protected getNext(): IteratorResult<T, any> {
+        let next = this.iterator.next();
+
+        while(this.skip){
+           if(!this.predicate(next.value)){
+               this.skip = false;
+           }
+           else{
+               next = this.iterator.next();
+           }
         }
+
+        return next;
     }
 }
