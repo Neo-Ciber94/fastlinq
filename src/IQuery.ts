@@ -1,5 +1,5 @@
 /* tslint:disable:unified-signatures */
-import { Compare } from "./Comparable";
+import { Compare } from "./Compare";
 import { IndexedValue } from "./IndexedIterable";
 
 /**
@@ -46,7 +46,7 @@ export interface IQuery<T> extends Iterable<T>{
     max() : T | undefined;
     max(compare: Compare<T>) : T | undefined;
     contains(value: T) : boolean;
-    contains(value: T, compare: Compare<T>) : boolean;
+    contains(predicate: (value: T) => boolean) : boolean;
     containsAll(values: Iterable<T>) : boolean;
     sequenceEquals(values: Iterable<T>) : boolean;
     elementAt(index: number) : T | undefined;

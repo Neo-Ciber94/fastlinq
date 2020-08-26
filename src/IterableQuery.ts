@@ -2,7 +2,7 @@
 /* tslint:disable: max-classes-per-file */
 
 import { IQuery, ToStringOptions} from "./IQuery";
-import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Comparable";
+import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Compare";
 import { MapIterable } from "./MapIterable";
 import { FlatMapIterable } from "./FlatMapIterable";
 import { WhereIterable } from "./WhereIterable";
@@ -160,7 +160,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     sort(compare?: any) {
         const array = this.toArray();
         if(compare){
-            const sorted = array.sort((x, y) => compare(x, y));
+            const sorted = array.sort((x, y) => compare(x, y).value);
             return new IterableQuery(sorted);
         }
         else{
@@ -173,13 +173,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     sortDecending(compare?: any) {
         const array = this.toArray();
         if(compare){
-            const sorted = array.sort((x, y) => compare(y, x));
+            const sorted = array.sort((x, y) => compare(y, x).value);
             return new IterableQuery(sorted);
         }
         else{
             return new IterableQuery(array.sort((x, y) => {
-                const result = compareReverse(x, y);
-                return result?? 0;
+                return compareReverse(x, y)?.value?? 0;
             }));
         }
     }
@@ -194,14 +193,14 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             sorted = array.sort((x, y) => {
                 const left = keySelector(x);
                 const right = keySelector(y);
-                return compare(left, right);
+                return compare(left, right).value;
             });
         }
         else{
             sorted = array.sort((x, y) => {
                 const left = keySelector(x);
                 const right = keySelector(y);
-                return compareNatural(left, right)?? 0;
+                return compareNatural(left, right)?.value?? 0;
             });
         }
 
@@ -218,14 +217,14 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             sorted = array.sort((x, y) => {
                 const left = keySelector(x);
                 const right = keySelector(y);
-                return compare(right, left);
+                return compare(right, left).value;
             });
         }
         else{
             sorted = array.sort((x, y) => {
                 const left = keySelector(x);
                 const right = keySelector(y);
-                return compareReverse(left, right)?? 0;
+                return compareReverse(left, right)?.value?? 0;
             });
         }
 
@@ -314,7 +313,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         compare = compare?? compareNatural;
 
         for (const e of this) {
-            if(compare(e, value) === Ordering.Less){
+            if(value){
+                if(compare(e, value) === Ordering.Less){
+                    value = e;
+                }
+            }
+            else{
                 value = e;
             }
         }
@@ -329,7 +333,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         compare = compare?? compareNatural;
 
         for (const e of this) {
-            if(compare(e, value) === Ordering.Greater){
+            if(value){
+                if(compare(e, value) === Ordering.Greater){
+                    value = e;
+                }
+            }
+            else{
                 value = e;
             }
         }
@@ -338,21 +347,22 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     contains(value: T): boolean;
-    contains(value: T, compare: Compare<T>): boolean;
-    contains(value: any, compare?: any) {
-        for (const e of this) {
-            if(compare === null){
-                if(value === e){
-                    return true;
-                }
-            }
-            else{
-                if(compare(value, e) === Ordering.Equals){
+    contains(predicate: (value: T) => boolean): boolean;
+    contains(obj: any) {
+        if(typeof obj === 'function'){
+            for (const e of this) {
+                if(obj(e)){
                     return true;
                 }
             }
         }
-
+        else{
+            for(const e of this){
+                if(obj === e){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

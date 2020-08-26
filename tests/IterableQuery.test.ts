@@ -1,3 +1,4 @@
+import { Ordering } from "../src/Compare";
 import { IQuery } from "../src/IQuery";
 import "../src/Query";
 
@@ -165,7 +166,7 @@ test('IterableQuery.sort', () => {
 
 test('IterableQuery.sort with compare', () => {
     const elements = [1,5,2,4,3].asQuery();
-    expect(elements.sort((x,y) => x - y).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(elements.sort((x,y) => Ordering.of(x - y)).toArray()).toStrictEqual([1,2,3,4,5]);
 });
 
 test('IterableQuery.sortDecending', () => {
@@ -175,7 +176,7 @@ test('IterableQuery.sortDecending', () => {
 
 test('IterableQuery.sortDecending with compare', () => {
     const elements = [1,5,2,4,3].asQuery();
-    expect(elements.sortDecending((x,y) => x - y).toArray()).toStrictEqual([5,4,3,2,1]);
+    expect(elements.sortDecending((x,y) => Ordering.of(x - y)).toArray()).toStrictEqual([5,4,3,2,1]);
 });
 
 test('IterableQuery.sortBy', () => {
@@ -218,7 +219,7 @@ test('IterableQuery.sortBy with compare', () => {
         { id: 4, name: "Marie"}
     ];
 
-    const sorted = persons.asQuery().sortBy(e => e.id, (x, y) => x - y).toArray();
+    const sorted = persons.asQuery().sortBy(e => e.id, (x, y) => Ordering.of(x - y)).toArray();
     const expected : Person[] = [
         { id: 1, name: "Carla"},
         { id: 2, name: "Carl" },
@@ -270,7 +271,7 @@ test('IterableQuery.sortByDecending with compare', () => {
         { id: 4, name: "Marie"}
     ];
 
-    const sorted = persons.asQuery().sortByDecending(e => e.id, (x, y) => x - y).toArray();
+    const sorted = persons.asQuery().sortByDecending(e => e.id, (x, y) => Ordering.of(x - y)).toArray();
     const expected : Person[] = [
         { id: 5, name: "Bruno"},
         { id: 4, name: "Marie"},
@@ -376,4 +377,72 @@ test("IteratorQuery.partition", () => {
     const [even, odd] = numbers.partition((n) => n % 2 === 0);
     expect(even).toStrictEqual([2,4,6,8,10]);
     expect(odd).toStrictEqual([1,3,5,7,9]);
+});
+
+test("IteratorQuery.min", () => {
+    const numbers = [5,1,2,3,2].asQuery();
+    expect(numbers.min()).toStrictEqual(1);
+    expect(new Array<number>().asQuery().min()).toBeUndefined();
+});
+
+test("IteratorQuery.min with compare", () => {
+    const numbers = [5,1,2,3,2].asQuery();
+    expect(numbers.min((x,y) => Ordering.of(x - y))).toStrictEqual(1);
+    expect(new Array<number>().asQuery().min()).toBeUndefined();
+});
+
+test("IteratorQuery.max", () => {
+    const numbers = [5,1,2,3,2].asQuery();
+    expect(numbers.max()).toStrictEqual(5);
+    expect(new Array<number>().asQuery().max()).toBeUndefined();
+});
+
+test("IteratorQuery.max with compare", () => {
+    const numbers = [5,1,2,3,2].asQuery();
+    expect(numbers.max((x,y) => Ordering.of(x - y))).toStrictEqual(5);
+    expect(new Array<number>().asQuery().max()).toBeUndefined();
+});
+
+test("IteratorQuery.contains", () => {
+    const numbers = [5,1,2,3,2].asQuery();
+    expect(numbers.contains(5)).toBeTruthy();
+    expect(numbers.contains(1)).toBeTruthy();
+    expect(numbers.contains(2)).toBeTruthy();
+    expect(numbers.contains(6)).toBeFalsy();
+    expect(numbers.contains(0)).toBeFalsy();
+});
+
+test("IteratorQuery.contains with compare", () => {
+    interface Person{
+        readonly id: number;
+        readonly name: string;
+    }
+
+    const persons : Person[] = [
+        { id: 1, name: "Rose"},
+        { id: 2, name: "Alexander"},
+        { id: 3, name: "Ryu"}
+    ];
+
+    expect(persons.asQuery().contains(p => p.name === "Alexander")).toBeTruthy();
+    expect(persons.asQuery().contains(p => p.id === 1)).toBeTruthy();
+    expect(persons.asQuery().contains(p => p.name === "Romeo")).toBeFalsy();
+    expect(persons.asQuery().contains(p => p.id === 4)).toBeFalsy();
+});
+
+test("IteratorQuery.containsAll", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.containsAll([1,2,3])).toBeTruthy();
+    expect(elements.containsAll([1,2,3,4,5])).toBeTruthy();
+    expect(elements.containsAll([1,2,3,4,5,6])).toBeFalsy();
+    expect(elements.containsAll([6,7,8])).toBeFalsy();
+});
+
+test("IteratorQuery.sequenceEquals", () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.sequenceEquals([1,2,3,4,5])).toBeTruthy();
+    expect(elements.sequenceEquals([1,2,3,4,5,6])).toBeFalsy();
+    expect(elements.sequenceEquals([1,2,3,4])).toBeFalsy();
 });
