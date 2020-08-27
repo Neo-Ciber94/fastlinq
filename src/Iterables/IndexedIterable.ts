@@ -5,7 +5,7 @@ export interface IndexedValue<T>{
     readonly index: number;
 }
 
-export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>, IndexedIterable<T>>{
+export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private index: number = 0;
@@ -31,5 +31,31 @@ export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>, Indexe
             value: next.value,
             index: this.index++
         });
+    }
+}
+
+// tslint:disable-next-line: max-classes-per-file
+export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>>{
+    private readonly source: T[];
+    private index: number = 0;
+
+    constructor(array: T[]){
+        super();
+        this.source = array;
+    }
+
+    protected clone(): IndexedArrayIterable<T> {
+        return new IndexedArrayIterable(this.source);
+    }
+
+    protected getNext(): IteratorResult<IndexedValue<T>, any> {
+        if(this.index < this.source.length){
+            return iteratorResult({
+                value: this.source[this.index],
+                index: this.index++
+            });
+        }
+
+        return iteratorDone();
     }
 }

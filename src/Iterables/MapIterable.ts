@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from './IterableIterator';
 
-export class MapIterable<T, R> extends IterableIterator<R, MapIterable<T, R>>{
+export class MapIterable<T, R> extends IterableIterator<R>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly transform: (value: T) => R;
@@ -32,7 +32,7 @@ export class MapIterable<T, R> extends IterableIterator<R, MapIterable<T, R>>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class MapArrayIterable<T, R> extends IterableIterator<R, MapArrayIterable<T, R>>{
+export class MapArrayIterable<T, R> extends IterableIterator<R>{
     private readonly source: T[];
     private readonly transform: (value: T) => R;
     private index: number;

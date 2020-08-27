@@ -4,10 +4,10 @@ enum IteratorState{
     DONE,
 }
 
-export abstract class IterableIterator<TResult, TThis extends IterableIterator<TResult, TThis>> implements Iterable<TResult>, Iterator<TResult> {
+export abstract class IterableIterator<TResult> implements Iterable<TResult>, Iterator<TResult> {
     private state: IteratorState = IteratorState.HAS_NEXT;
 
-    protected abstract clone(): TThis;
+    protected abstract clone(): IterableIterator<TResult>;
     protected abstract getNext(): IteratorResult<TResult>;
 
     next(): IteratorResult<TResult> {

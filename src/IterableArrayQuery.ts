@@ -1,4 +1,8 @@
+import { IQuery } from "./IQuery";
+import { IterableQuery } from "./IterableQuery";
 import { IterableQueryBase } from "./IterableQueryBase";
+import { MapArrayIterable } from "./Iterables/MapIterable";
+import { WhereArrayIterable } from "./Iterables/WhereIterable";
 
 
 export class IterableArrayQuery<T> extends IterableQueryBase<T> {
@@ -11,6 +15,23 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> {
 
     [Symbol.iterator](): Iterator<T, any, undefined> {
         return this.array[Symbol.iterator]();
+    }
+
+    map<R>(f: (value: T) => R) : IQuery<R>{
+        const iterable = new MapArrayIterable(this.array, f);
+        return new IterableQuery(iterable);
+    }
+
+    where(f: (value: T) => boolean) : IQuery<T>{
+        const iterable = new WhereArrayIterable(this.array, f);
+        return new IterableQuery(iterable);
+    }
+
+    forEach(f: (value: T) => void) : void{
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < this.array.length; i++) {
+            f(this.array[i]);
+        }
     }
 
     first(): T | undefined {

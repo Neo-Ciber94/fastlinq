@@ -8,7 +8,7 @@ import { SkipIterable } from "./Iterables/SkipIterable";
 import { TakeIterable } from "./Iterables/TakeIterable";
 import { SkipWhileIterable } from "./Iterables/SkipWhileIterable";
 import { TakeWhileIterable } from "./Iterables/TakeWhileIterable";
-import { AppendPrependIterator } from "./Iterables/AppendPredendIterable";
+import { AppendPrependIterable } from "./Iterables/AppendPredendIterable";
 import { ConcatIterable } from "./Iterables/ConcatIterable";
 import { IndexedIterable, IndexedValue } from "./Iterables/IndexedIterable";
 import { ChunkIterable } from "./Iterables/ChunkIterable";
@@ -58,12 +58,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
     }
 
     append(value: T): IQuery<T> {
-        const iterable = new AppendPrependIterator(this, value, true);
+        const iterable = new AppendPrependIterable(this, value, true);
         return new IterableQuery(iterable);
     }
 
     prepend(value: T): IQuery<T> {
-        const iterable = new AppendPrependIterator(this, value, false);
+        const iterable = new AppendPrependIterable(this, value, false);
         return new IterableQuery(iterable);
     }
 

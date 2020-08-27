@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WhereIterable<T> extends IterableIterator<T, WhereIterable<T>> {
+export class WhereIterable<T> extends IterableIterator<T> {
     private readonly source: Iterable<T>
     private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;
@@ -36,7 +36,7 @@ export class WhereIterable<T> extends IterableIterator<T, WhereIterable<T>> {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class WhereArrayIterable<T> extends IterableIterator<T, WhereArrayIterable<T>> {
+export class WhereArrayIterable<T> extends IterableIterator<T> {
     private readonly source: T[];
     private readonly predicate: (value: T) => boolean;
     private index: number;

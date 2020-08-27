@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class ZipIterable<T, R, TResult> extends IterableIterator<TResult, ZipIterable<T, R, TResult>>{
+export class ZipIterable<T, R, TResult> extends IterableIterator<TResult>{
     private readonly source: Iterable<T>;
     private readonly other: Iterable<R>
     private readonly leftIterator: Iterator<T>;

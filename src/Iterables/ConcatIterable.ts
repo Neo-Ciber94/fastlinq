@@ -1,6 +1,6 @@
 import { IterableIterator } from "./IterableIterator";
 
-export class ConcatIterable<T> extends IterableIterator<T, ConcatIterable<T>> {
+export class ConcatIterable<T> extends IterableIterator<T> {
     private readonly source: Iterable<T>;
     private readonly other: Iterable<T>;
     private iterator: Iterator<T>;

@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WindowIterable<T> extends IterableIterator<T[], WindowIterable<T>> {
+export class WindowIterable<T> extends IterableIterator<T[]> {
     private readonly source: Iterable<T>;
     private readonly elements: T[];
     private readonly size: number;

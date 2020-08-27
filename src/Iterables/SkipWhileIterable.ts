@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class SkipWhileIterable<T> extends IterableIterator<T, SkipWhileIterable<T>>{
+export class SkipWhileIterable<T> extends IterableIterator<T>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly predicate: (value: T) => boolean;

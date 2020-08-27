@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class ChunkIterable<T> extends IterableIterator<T[], ChunkIterable<T>>{
+export class ChunkIterable<T> extends IterableIterator<T[]>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly chunkSize: number;
