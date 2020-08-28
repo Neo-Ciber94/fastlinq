@@ -1,4 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
+import { SizedIterable } from "./SizedIterable";
 
 export class AppendPrependIterable<T> extends IterableIterator<T>{
     private readonly source: Iterable<T>;
@@ -43,7 +44,7 @@ export class AppendPrependIterable<T> extends IterableIterator<T>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class AppendPrependArrayIterable<T> extends IterableIterator<T>{
+export class AppendPrependArrayIterable<T> extends IterableIterator<T> implements SizedIterable<T>{
     private readonly source: T[];
     private readonly append: boolean;
     private readonly item: T;
@@ -84,5 +85,13 @@ export class AppendPrependArrayIterable<T> extends IterableIterator<T>{
                 return iteratorResult(this.source[this.index++]);
             }
         }
+    }
+
+    toArray(): T[] {
+        return Array.from(this);
+    }
+
+    count(): number {
+        return this.source.length;
     }
 }

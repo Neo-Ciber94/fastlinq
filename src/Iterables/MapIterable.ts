@@ -1,4 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from './IterableIterator';
+import { SizedIterable } from './SizedIterable';
 
 export class MapIterable<T, R> extends IterableIterator<R>{
     private readonly source: Iterable<T>;
@@ -32,7 +33,7 @@ export class MapIterable<T, R> extends IterableIterator<R>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class MapArrayIterable<T, R> extends IterableIterator<R>{
+export class MapArrayIterable<T, R> extends IterableIterator<R> implements SizedIterable<R>{
     private readonly source: T[];
     private readonly transform: (value: T) => R;
     private index: number;
@@ -55,5 +56,13 @@ export class MapArrayIterable<T, R> extends IterableIterator<R>{
         }
 
         return iteratorDone();
+    }
+
+    toArray(): R[] {
+        return Array.from(this);
+    }
+
+    count(): number {
+        return this.source.length;
     }
 }

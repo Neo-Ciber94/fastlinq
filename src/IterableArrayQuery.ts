@@ -1,11 +1,15 @@
-import { IQuery } from "./IQuery";
+import { Queryable } from "./Queryable";
 import { IterableQuery } from "./IterableQuery";
 import { IterableQueryBase } from "./IterableQueryBase";
+import { AppendPrependArrayIterable } from "./Iterables/AppendPredendIterable";
+import { IndexedArrayIterable, IndexedValue } from "./Iterables/IndexedIterable";
 import { MapArrayIterable } from "./Iterables/MapIterable";
+import { SkipArrayIterable } from "./Iterables/SkipIterable";
+import { TakeArrayIterable } from "./Iterables/TakeIterable";
 import { WhereArrayIterable } from "./Iterables/WhereIterable";
+import { SizedIterable } from "./Iterables/SizedIterable";
 
-
-export class IterableArrayQuery<T> extends IterableQueryBase<T> {
+export class IterableArrayQuery<T> extends IterableQueryBase<T> implements SizedIterable<T> {
     private readonly array: T[];
 
     constructor(array: T[]) {
@@ -17,21 +21,46 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> {
         return this.array[Symbol.iterator]();
     }
 
-    map<R>(f: (value: T) => R) : IQuery<R>{
-        const iterable = new MapArrayIterable(this.array, f);
+    map<R>(transform: (value: T) => R) : Queryable<R>{
+        const iterable = new MapArrayIterable(this.array, transform);
         return new IterableQuery(iterable);
     }
 
-    where(f: (value: T) => boolean) : IQuery<T>{
-        const iterable = new WhereArrayIterable(this.array, f);
+    where(predicate: (value: T) => boolean) : Queryable<T>{
+        const iterable = new WhereArrayIterable(this.array, predicate);
         return new IterableQuery(iterable);
     }
 
-    forEach(f: (value: T) => void) : void{
+    take(count: number) : Queryable<T>{
+        const iterable = new TakeArrayIterable(this.array, count);
+        return new IterableQuery(iterable);
+    }
+
+    skip(count: number) : Queryable<T>{
+        const iterable = new SkipArrayIterable(this.array, count);
+        return new IterableQuery(iterable);
+    }
+
+    append(value: T) : Queryable<T>{
+        const iterable = new AppendPrependArrayIterable(this.array, value, true);
+        return new IterableQuery(iterable);
+    }
+
+    prepend(value: T) : Queryable<T>{
+        const iterable = new AppendPrependArrayIterable(this.array, value, false);
+        return new IterableQuery(iterable);
+    }
+
+    forEach(action: (value: T) => void) : void{
         // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < this.array.length; i++) {
-            f(this.array[i]);
+            action(this.array[i]);
         }
+    }
+
+    indexed() : Queryable<IndexedValue<T>>{
+        const iterable = new IndexedArrayIterable(this.array);
+        return new IterableQuery(iterable);
     }
 
     first(): T | undefined {
@@ -39,6 +68,9 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> {
     }
 
     last(): T | undefined {
+        if(this.array.length === 0){
+            return undefined;
+        }
         return this.array[this.array.length - 1];
     }
 

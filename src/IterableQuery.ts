@@ -1,7 +1,7 @@
 import { IterableQueryBase } from "./IterableQueryBase";
 
 export class IterableQuery<T> extends IterableQueryBase<T>{
-    private readonly iterable: Iterable<T>;
+    readonly iterable: Iterable<T>;
 
     constructor(iterable: Iterable<T>){
         super();

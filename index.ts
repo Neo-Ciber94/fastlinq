@@ -1,11 +1,8 @@
 /* tslint:disable: no-console */
 import './src/Query';
-import { measureTimeAndLog, measureAverageTimeAndLog, repeat } from './src/Iterables/Utils';
-import { AppendPrependArrayIterable } from './src/Iterables/AppendPredendIterable';
-import { IterableQuery } from './src/IterableQuery';
+import { Query } from './src/Query';
 
-const elements = [1,2,3,4,5];
-
+console.log(Array.isArray(new Set<number>()));
 console.log(
-    
+    new Set<number>().asQuery().where(e => e > 5).defaultIfEmpty([1,2,3]).toString()
 )

@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class FlatMapIterable<T, R> extends IterableIterator<R> {
+export class FlatMapIterable<T, R> extends IterableIterator<R>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly transform: (value: T) => R[];

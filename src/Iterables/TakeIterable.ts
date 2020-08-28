@@ -1,4 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
+import { SizedIterable } from "./SizedIterable";
 
 export class TakeIterable<T> extends IterableIterator<T>{
     private readonly source: Iterable<T>;
@@ -33,9 +34,9 @@ export class TakeIterable<T> extends IterableIterator<T>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class TakeArrayIterable<T> extends IterableIterator<T>{
+export class TakeArrayIterable<T> extends IterableIterator<T> implements SizedIterable<T>{
     private readonly source: T[];
-    private readonly count: number;
+    private readonly takeCount: number;
     private index: number;
 
     constructor(array: T[], count: number){
@@ -45,19 +46,27 @@ export class TakeArrayIterable<T> extends IterableIterator<T>{
 
         super();
         this.source = array;
-        this.count = count;
+        this.takeCount = count;
         this.index = 0;
     }
 
     protected clone(): TakeArrayIterable<T> {
-        return new TakeArrayIterable(this.source, this.count);
+        return new TakeArrayIterable(this.source, this.takeCount);
     }
 
     protected getNext(): IteratorResult<T, any> {
-        if(this.index < this.count && this.index < this.source.length){
+        if(this.index < this.takeCount && this.index < this.source.length){
             return iteratorResult(this.source[this.index++]);
         }
 
         return iteratorDone();
+    }
+
+    toArray(): T[] {
+        return this.source.slice();
+    }
+
+    count(): number {
+        return Math.min(this.takeCount, this.source.length);
     }
 }

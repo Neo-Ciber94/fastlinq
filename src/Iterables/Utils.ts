@@ -1,5 +1,6 @@
 /* tslint:disable: no-console */
 import { performance } from 'perf_hooks';
+import { SizedIterable } from './SizedIterable';
 
 export function repeat(n: number, f: () => void) {
     for(let i = 0; i < n; i++){
@@ -80,4 +81,8 @@ export function isIterable(obj?: any) : boolean{
     }
 
     return typeof obj[Symbol.iterator] === 'function';
+}
+
+export function isSizedIterable(obj: any) : obj is SizedIterable<unknown>{
+    return obj.count !== undefined && obj.toArray !== undefined;
 }

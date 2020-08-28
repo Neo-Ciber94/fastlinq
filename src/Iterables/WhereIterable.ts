@@ -36,7 +36,7 @@ export class WhereIterable<T> extends IterableIterator<T> {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class WhereArrayIterable<T> extends IterableIterator<T> {
+export class WhereArrayIterable<T> extends IterableIterator<T>{
     private readonly source: T[];
     private readonly predicate: (value: T) => boolean;
     private index: number;

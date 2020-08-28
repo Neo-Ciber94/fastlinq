@@ -1,5 +1,5 @@
 import { Ordering } from "../src/Compare";
-import { IQuery } from "../src/IQuery";
+import { Queryable } from "../src/Queryable";
 import { IterableQuery } from "../src/IterableQuery";
 import "../src/Query";
 
@@ -108,7 +108,7 @@ test('IterableQuery.distinctBy', () => {
         readonly age: number;
     }
 
-    const persons : IQuery<Person> = [
+    const persons : Queryable<Person> = [
         { name: "Peter", age: 20},
         { name: "Tony", age: 40},
         { name: "Bruce", age: 40},

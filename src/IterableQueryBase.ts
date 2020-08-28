@@ -1,5 +1,5 @@
 /* tslint:disable: unified-signatures */
-import { IQuery, ToStringOptions } from "./IQuery";
+import { Queryable, ToStringOptions } from "./Queryable";
 import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Compare";
 import { MapIterable } from "./Iterables/MapIterable";
 import { FlatMapIterable } from "./Iterables/FlatMapIterable";
@@ -16,72 +16,85 @@ import { WindowIterable } from "./Iterables/WindowIterable";
 import { ZipIterable } from "./Iterables/ZipIterable";
 import { JoinIterable } from "./Iterables/JoinIterable";
 import { IterableQuery } from "./IterableQuery";
-import { isIterable } from "./Iterables/Utils";
+import { isIterable, isSizedIterable } from "./Iterables/Utils";
+import { SizedIterable } from "./Iterables/SizedIterable";
 
-
-export abstract class IterableQueryBase<T> implements IQuery<T> {
+export abstract class IterableQueryBase<T> implements Queryable<T> {
     abstract [Symbol.iterator](): Iterator<T, any, undefined>;
 
-    map<R>(f: (value: T) => R): IQuery<R> {
-        const iterable = new MapIterable(this, f);
+    map<R>(transform: (value: T) => R): Queryable<R> {
+        if(this instanceof IterableQuery){
+            const items = (this as IterableQuery<T>).iterable;
+            if(items instanceof IterableArrayQuery){
+                return (items as IterableArrayQuery<T>).map(transform);
+            }
+        }
+
+        const iterable = new MapIterable(this, transform);
         return new IterableQuery(iterable);
     }
 
-    flatMap<R>(f: (value: T) => R[]): IQuery<R> {
-        const iterable = new FlatMapIterable(this, f);
+    flatMap<R>(transform: (value: T) => R[]): Queryable<R> {
+        const iterable = new FlatMapIterable(this, transform);
         return new IterableQuery(iterable);
     }
 
-    where(f: (value: T) => boolean): IQuery<T> {
-        const iterable = new WhereIterable(this, f);
+    where(predicate: (value: T) => boolean): Queryable<T> {
+        const iterable = new WhereIterable(this, predicate);
         return new IterableQuery(iterable);
     }
 
-    skip(n: number): IQuery<T> {
+    skip(n: number): Queryable<T> {
         const iterable = new SkipIterable(this, n);
         return new IterableQuery(iterable);
     }
 
-    take(n: number): IQuery<T> {
+    take(n: number): Queryable<T> {
         const iterable = new TakeIterable(this, n);
         return new IterableQuery(iterable);
     }
 
-    skipWhile(f: (value: T) => boolean): IQuery<T> {
-        const iterable = new SkipWhileIterable(this, f);
+    skipWhile(predicate: (value: T) => boolean): Queryable<T> {
+        const iterable = new SkipWhileIterable(this, predicate);
         return new IterableQuery(iterable);
     }
 
-    takeWhile(f: (value: T) => boolean): IQuery<T> {
-        const iterable = new TakeWhileIterable(this, f);
+    takeWhile(predicate: (value: T) => boolean): Queryable<T> {
+        const iterable = new TakeWhileIterable(this, predicate);
         return new IterableQuery(iterable);
     }
 
-    append(value: T): IQuery<T> {
+    append(value: T): Queryable<T> {
         const iterable = new AppendPrependIterable(this, value, true);
         return new IterableQuery(iterable);
     }
 
-    prepend(value: T): IQuery<T> {
+    prepend(value: T): Queryable<T> {
         const iterable = new AppendPrependIterable(this, value, false);
         return new IterableQuery(iterable);
     }
 
-    concat(elements: Iterable<T>): IQuery<T> {
+    concat(elements: Iterable<T>): Queryable<T> {
         const iterable = new ConcatIterable(this, elements);
         return new IterableQuery(iterable);
     }
 
-    indexed(): IQuery<IndexedValue<T>> {
+    indexed(): Queryable<IndexedValue<T>> {
         const iterable = new IndexedIterable(this);
         return new IterableQuery(iterable);
     }
 
-    distinct(): IQuery<T> {
-        return new IterableQuery(this.toSet());
+    distinct(): Queryable<T> {
+        const array = new Array<T>();
+        for (const e of this) {
+            if(!array.includes(e)){
+                array.push(e);
+            }
+        }
+        return new IterableArrayQuery(array);
     }
 
-    distinctBy<R>(keySelector: (value: T) => R): IQuery<T> {
+    distinctBy<R>(keySelector: (value: T) => R): Queryable<T> {
         const array = new Array<T>();
 
         for (const e of this) {
@@ -101,20 +114,20 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             }
         }
 
-        return new IterableQuery(array);
+        return new IterableArrayQuery(array);
     }
 
-    union(elements: Iterable<T>): IQuery<T> {
+    union(elements: Iterable<T>): Queryable<T> {
         const array = this.toArray();
         for (const e of elements) {
             if (!array.includes(e)) {
                 array.push(e);
             }
         }
-        return new IterableQuery(array);
+        return new IterableArrayQuery(array);
     }
 
-    except(elements: Iterable<T>): IQuery<T> {
+    except(elements: Iterable<T>): Queryable<T> {
         const array = new Array<T>();
         const other = Array.from(elements);
 
@@ -124,10 +137,10 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             }
         }
 
-        return new IterableQuery(array);
+        return new IterableArrayQuery(array);
     }
 
-    intersect(elements: Iterable<T>): IQuery<T> {
+    intersect(elements: Iterable<T>): Queryable<T> {
         const array = new Array<T>();
         const other = Array.from(elements);
 
@@ -137,54 +150,53 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             }
         }
 
-        return new IterableQuery(array);
+        return new IterableArrayQuery(array);
     }
 
-    reversed(): IQuery<T> {
+    reversed(): Queryable<T> {
         const array = this.toArray().reverse();
-        return new IterableQuery(array);
+        return new IterableArrayQuery(array);
     }
 
-    chuncked(chunkSize: number): IQuery<T[]> {
+    chuncked(chunkSize: number): Queryable<T[]> {
         const iterable = new ChunkIterable(this, chunkSize);
         return new IterableQuery(iterable);
     }
 
-    windowed(size: number): IQuery<T[]> {
+    windowed(size: number): Queryable<T[]> {
         const iterable = new WindowIterable(this, size);
         return new IterableQuery(iterable);
     }
 
-    sort(): IQuery<T>;
-    sort(compare: Compare<T>): IQuery<T>;
+    sort(): Queryable<T>;
+    sort(compare: Compare<T>): Queryable<T>;
     sort(compare?: any) {
         const array = this.toArray();
         if (compare) {
             const sorted = array.sort((x, y) => compare(x, y).value);
-            return new IterableQuery(sorted);
+            return new IterableArrayQuery(sorted);
         }
-        else {
-            return new IterableQuery(array.sort());
-        }
+
+        return new IterableArrayQuery(array.sort());
     }
 
-    sortDecending(): IQuery<T>;
-    sortDecending(compare: Compare<T>): IQuery<T>;
+    sortDecending(): Queryable<T>;
+    sortDecending(compare: Compare<T>): Queryable<T>;
     sortDecending(compare?: any) {
         const array = this.toArray();
         if (compare) {
             const sorted = array.sort((x, y) => compare(y, x).value);
-            return new IterableQuery(sorted);
+            return new IterableArrayQuery(sorted);
         }
         else {
-            return new IterableQuery(array.sort((x, y) => {
+            return new IterableArrayQuery(array.sort((x, y) => {
                 return compareReverse(x, y)?.value ?? 0;
             }));
         }
     }
 
-    sortBy<K>(keySelector: (value: T) => K): IQuery<T>;
-    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>): IQuery<T>;
+    sortBy<K>(keySelector: (value: T) => K): Queryable<T>;
+    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>): Queryable<T>;
     sortBy(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -204,11 +216,11 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             });
         }
 
-        return new IterableQuery(sorted);
+        return new IterableArrayQuery(sorted);
     }
 
-    sortByDecending<K>(keySelector: (value: T) => K): IQuery<T>;
-    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>): IQuery<T>;
+    sortByDecending<K>(keySelector: (value: T) => K): Queryable<T>;
+    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>): Queryable<T>;
     sortByDecending(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -228,41 +240,44 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             });
         }
 
-        return new IterableQuery(sorted);
+        return new IterableArrayQuery(sorted);
     }
 
-    joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean): IQuery<[T, R]> {
+    joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean): Queryable<[T, R]> {
         const iterable = new JoinIterable(this, elements, selector);
         return new IterableQuery(iterable);
     }
 
-    zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult): IQuery<TResult> {
+    zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult): Queryable<TResult> {
         const iterable = new ZipIterable(this, elements, combine);
         return new IterableQuery(iterable);
     }
 
-    defaultIfEmpty(defaultValue: Iterable<T>): IQuery<T> {
+    defaultIfEmpty(defaultValue: Iterable<T>): Queryable<T> {
         if(this.isEmpty()){
+            if(Array.isArray(defaultValue)){
+                return new IterableArrayQuery(defaultValue as T[]);
+            }
             return new IterableQuery(defaultValue);
         }
 
         return this;
     }
 
-    seek(f: (value: T) => void): IQuery<T> {
-        this.forEach(f);
+    seek(action: (value: T) => void): Queryable<T> {
+        this.forEach(action);
         return this;
     }
 
-    forEach(f: (value: T) => void): void {
+    forEach(action: (value: T) => void): void {
         for (const e of this) {
-            f(e);
+            action(e);
         }
     }
 
-    reduce(f: (prev: T, current: T) => T): T | undefined;
-    reduce(f: (prev: T, current: T) => T, seed: T): T;
-    reduce(f: any, seed?: any) {
+    reduce(reducer: (prev: T, current: T) => T): T | undefined;
+    reduce(reducer: (prev: T, current: T) => T, seed: T): T;
+    reduce(reducer: any, seed?: any) {
         const iterator = this[Symbol.iterator]();
         let result: T = seed;
 
@@ -276,7 +291,7 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         while (true) {
             const next = iterator.next();
             if (!next.done) {
-                result = f(result, next.value);
+                result = reducer(result, next.value);
             }
             else {
                 break;
@@ -298,12 +313,12 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
         return result;
     }
 
-    partition(f: (value: T) => boolean): [T[], T[]] {
+    partition(predicate: (value: T) => boolean): [T[], T[]] {
         const left = new Array<T>();
         const right = new Array<T>();
 
         for (const e of this) {
-            if (f(e)) {
+            if (predicate(e)) {
                 left.push(e);
             }
             else {
@@ -691,10 +706,20 @@ export abstract class IterableQueryBase<T> implements IQuery<T> {
             return count;
         }
         else{
+            if(this instanceof IterableQuery){
+                const items = (this as IterableQuery<T>).iterable;
+                if(isSizedIterable(items)){
+                    return (items as SizedIterable<T>).count();
+                }
+            }
+
             let count = 0;
-            for (const _ of this) {
+            const iterator = this[Symbol.iterator]();
+
+            while(!iterator.next().done){
                 count += 1;
             }
+
             return count;
         }
     }
@@ -784,3 +809,6 @@ export function iterableToString(iterable: any, options: ToStringOptions) : stri
     result += postfix;
     return result;
 }
+
+// Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'
+import { IterableArrayQuery } from "./IterableArrayQuery";

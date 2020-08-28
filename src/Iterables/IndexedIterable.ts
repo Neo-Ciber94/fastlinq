@@ -1,4 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
+import { SizedIterable } from "./SizedIterable";
 
 export interface IndexedValue<T>{
     readonly value: T;
@@ -35,7 +36,7 @@ export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>>{
+export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>> implements SizedIterable<IndexedValue<T>>{
     private readonly source: T[];
     private index: number = 0;
 
@@ -57,5 +58,13 @@ export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>>{
         }
 
         return iteratorDone();
+    }
+
+    toArray(): IndexedValue<T>[] {
+        return Array.from(this);
+    }
+
+    count(): number {
+        return this.source.length;
     }
 }
