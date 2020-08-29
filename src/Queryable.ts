@@ -46,6 +46,8 @@ export interface Queryable<T> extends Iterable<T>{
     min(compare: Compare<T>) : T | undefined;
     max() : T | undefined;
     max(compare: Compare<T>) : T | undefined;
+    minmax() : [T, T] | undefined;
+    minmax(compare: Compare<T>) : [T, T] | undefined;
     contains(value: T) : boolean;
     contains(predicate: (value: T) => boolean) : boolean;
     containsAll(values: Iterable<T>) : boolean;

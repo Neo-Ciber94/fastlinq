@@ -87,10 +87,6 @@ export class AppendPrependArrayIterable<T> extends IterableIterator<T> implement
         }
     }
 
-    toArray(): T[] {
-        return Array.from(this);
-    }
-
     count(): number {
         return this.source.length;
     }

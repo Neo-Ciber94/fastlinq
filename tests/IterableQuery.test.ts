@@ -404,6 +404,19 @@ test("IteratorQuery.max with compare", () => {
     expect(new Array<number>().asQuery().max()).toBeUndefined();
 });
 
+test("IteratorQuery.minmax", () => {
+    const elements = [5,1,4,2,3].asQuery();
+    expect(elements.minmax()).toStrictEqual([1,5]);
+    expect(new Array<number>().asQuery().minmax()).toBeUndefined();
+})
+
+test("IteratorQuery.minmax with compare", () => {
+    const elements = [5,1,4,2,3].asQuery();
+    const compare = (x: number, y: number) => Ordering.of(x - y);
+    expect(elements.minmax(compare)).toStrictEqual([1,5]);
+    expect(new Array<number>().asQuery().minmax(compare)).toBeUndefined();
+})
+
 test("IteratorQuery.contains", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.contains(5)).toBeTruthy();

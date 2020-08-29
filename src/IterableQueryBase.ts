@@ -16,20 +16,13 @@ import { WindowIterable } from "./Iterables/WindowIterable";
 import { ZipIterable } from "./Iterables/ZipIterable";
 import { JoinIterable } from "./Iterables/JoinIterable";
 import { IterableQuery } from "./IterableQuery";
-import { isIterable, isSizedIterable } from "./Iterables/Utils";
+import { isIterable } from "./Iterables/Utils";
 import { SizedIterable } from "./Iterables/SizedIterable";
 
 export abstract class IterableQueryBase<T> implements Queryable<T> {
     abstract [Symbol.iterator](): Iterator<T, any, undefined>;
 
     map<R>(transform: (value: T) => R): Queryable<R> {
-        if(this instanceof IterableQuery){
-            const items = (this as IterableQuery<T>).iterable;
-            if(items instanceof IterableArrayQuery){
-                return (items as IterableArrayQuery<T>).map(transform);
-            }
-        }
-
         const iterable = new MapIterable(this, transform);
         return new IterableQuery(iterable);
     }
@@ -367,6 +360,14 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
 
         return value;
+    }
+
+    minmax(): [T, T] | undefined;
+    minmax(compare: Compare<T>): [T, T] | undefined;
+    minmax(compare?: any) {
+        const min = this.min(compare);
+        const max = this.max(compare);
+        return min && max? [min, max] : undefined;
     }
 
     contains(value: T): boolean;
@@ -707,9 +708,9 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
         else{
             if(this instanceof IterableQuery){
-                const items = (this as IterableQuery<T>).iterable;
-                if(isSizedIterable(items)){
-                    return (items as SizedIterable<T>).count();
+                const thisCount = getSizedIterableCount(this);
+                if(thisCount){
+                    return thisCount;
                 }
             }
 
@@ -764,7 +765,7 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
     }
 }
 
-export function iterableToString(iterable: any, options: ToStringOptions) : string{
+function iterableToString(iterable: any, options: ToStringOptions) : string{
     const separator = typeof options === 'string'? options : options?.separator?? ", ";
     const prefix = options?.prefix?? "[";
     const postfix = options?.postfix?? "]";
@@ -808,6 +809,22 @@ export function iterableToString(iterable: any, options: ToStringOptions) : stri
 
     result += postfix;
     return result;
+}
+
+function getSizedIterableCount(iter: any) : number | undefined{
+    function isSizedIterable(obj: any) : obj is SizedIterable<unknown>{
+        return obj.count !== undefined;
+    }
+
+    if(iter instanceof IterableQuery){
+        return getSizedIterableCount(iter.iterable);
+    }
+
+    if(isSizedIterable(iter)){
+        return iter.count();
+    }
+
+    return undefined;
 }
 
 // Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'

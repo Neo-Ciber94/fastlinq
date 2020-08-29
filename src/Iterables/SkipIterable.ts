@@ -1,4 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
+import { SizedIterable } from "./SizedIterable";
 
 export class SkipIterable<T> extends IterableIterator<T>{
     private readonly source: Iterable<T>;
@@ -35,9 +36,9 @@ export class SkipIterable<T> extends IterableIterator<T>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class SkipArrayIterable<T> extends IterableIterator<T>{
+export class SkipArrayIterable<T> extends IterableIterator<T> implements SizedIterable<T>{
     private readonly source: T[];
-    private readonly count: number;
+    private readonly skipCount: number;
     private index: number;
 
     constructor(array: T[], count: number){
@@ -47,12 +48,12 @@ export class SkipArrayIterable<T> extends IterableIterator<T>{
 
         super();
         this.source = array;
-        this.count = count;
+        this.skipCount = count;
         this.index = count;
     }
 
     protected clone(): SkipArrayIterable<T> {
-        return new SkipArrayIterable(this.source, this.count);
+        return new SkipArrayIterable(this.source, this.skipCount);
     }
 
     protected getNext(): IteratorResult<T, any> {
@@ -61,5 +62,9 @@ export class SkipArrayIterable<T> extends IterableIterator<T>{
         }
 
         return iteratorDone();
+    }
+
+    count(): number {
+        return Math.min(0, this.source.length - this.skipCount);
     }
 }

@@ -62,10 +62,6 @@ export class TakeArrayIterable<T> extends IterableIterator<T> implements SizedIt
         return iteratorDone();
     }
 
-    toArray(): T[] {
-        return this.source.slice();
-    }
-
     count(): number {
         return Math.min(this.takeCount, this.source.length);
     }

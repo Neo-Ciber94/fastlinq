@@ -58,10 +58,6 @@ export class MapArrayIterable<T, R> extends IterableIterator<R> implements Sized
         return iteratorDone();
     }
 
-    toArray(): R[] {
-        return Array.from(this);
-    }
-
     count(): number {
         return this.source.length;
     }

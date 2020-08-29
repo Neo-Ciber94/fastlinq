@@ -60,10 +60,6 @@ export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>> i
         return iteratorDone();
     }
 
-    toArray(): IndexedValue<T>[] {
-        return Array.from(this);
-    }
-
     count(): number {
         return this.source.length;
     }
