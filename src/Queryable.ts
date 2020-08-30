@@ -43,6 +43,9 @@ export interface Queryable<T> extends Iterable<T>{
     reduce(reducer: (prev: T, current: T) => T) : T | undefined;
     reduce(reducer: (prev: T, current: T) => T, seed: T) : T;
     fold<R>(seed: R, combine: (prev: R, current: T) => R) : R;
+    sum(selector: (value: T) => number) : number | undefined;
+    product(selector: (value: T) => number) : number | undefined;
+    average(selector: (value: T) => number) : number | undefined;
     partition(predicate: (value: T) => boolean) : [T[], T[]];
     min() : T | undefined;
     min(compare: Compare<T>) : T | undefined;
@@ -55,13 +58,13 @@ export interface Queryable<T> extends Iterable<T>{
     containsAll(values: Iterable<T>) : boolean;
     sequenceEquals(values: Iterable<T>) : boolean;
     elementAt(index: number) : T | undefined;
-    //elementAtOrElse(index: number, defaultValue: T) : T;
+    // elementAtOrElse(index: number, defaultValue: T) : T;
     indexOf(value: T) : number | undefined;
     lastIndexOf(value: T) : number | undefined;
     first() : T | undefined;
     last() : T | undefined;
-    //firstOrElse(defaultValue: T) : T;
-    //lastOrElse(defaultValue: T) : T;
+    // firstOrElse(defaultValue: T) : T;
+    // lastOrElse(defaultValue: T) : T;
     find(predicate: (value: T) => boolean) : T | undefined;
     findLast(predicate: (value: T) => boolean) : T | undefined;
     findIndex(predicate: (value: T) => boolean) : number | undefined;
@@ -69,7 +72,7 @@ export interface Queryable<T> extends Iterable<T>{
     findIndices(predicate: (value: T) => boolean) : number[]
     single() : T | undefined;
     single(predicate: (value: T) => boolean) : T | undefined;
-    //singleOrElse(defaultValue: T) : T;
+    // singleOrElse(defaultValue: T) : T;
     every(predicate: (value: T) => boolean) : boolean;
     any() : boolean;
     any(predicate: (value: T) => boolean) : boolean;

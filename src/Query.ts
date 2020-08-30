@@ -69,11 +69,11 @@ Map.prototype.asQuery = function<K,V>() : Queryable<KeyValue<K,V>>{
 }
 
 Array.prototype.asQuery = function<T>() : Queryable<T>{
-    return new IterableArrayQuery(this);
+    return new IterableArrayQuery<T>(this);
 }
 
 Set.prototype.asQuery = function<T>() : Queryable<T>{
-    return new IterableQuery(this);
+    return new IterableQuery<T>(this);
 }
 
 String.prototype.asQuery = function() : Queryable<string>{

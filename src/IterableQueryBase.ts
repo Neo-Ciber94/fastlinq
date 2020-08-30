@@ -334,6 +334,55 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return result;
     }
 
+    sum(selector: (value: T) => number): number | undefined {
+        let total : number | undefined;
+
+        for (const e of this) {
+            if(total){
+                total += selector(e);
+            }
+            else{
+                total = selector(e);
+            }
+        }
+        return total;
+    }
+
+    product(selector: (value: T) => number): number | undefined {
+        let total : number | undefined;
+
+        for (const e of this) {
+            if(total){
+                total *= selector(e);
+            }
+            else{
+                total = selector(e);
+            }
+        }
+        return total;
+    }
+
+    average(selector: (value: T) => number): number | undefined {
+        let total : number | undefined;
+        let count = 0;
+
+        for (const e of this) {
+            if(total){
+                total += selector(e);
+            }
+            else{
+                total = selector(e);
+            }
+
+            count += 1;
+        }
+        if(count > 0 && total){
+            return total / count;
+        }
+
+        return total;
+    }
+
     partition(predicate: (value: T) => boolean): [T[], T[]] {
         const left = new Array<T>();
         const right = new Array<T>();
@@ -731,6 +780,10 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
                 if(predicate(e)){
                     count += 1;
                 }
+
+                if(count > Number.MAX_SAFE_INTEGER){
+                    throw new Error("size of the iterable is greater than the max safe interger value")
+                }
             }
             return count;
         }
@@ -747,6 +800,10 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
 
             while(!iterator.next().done){
                 count += 1;
+
+                if(count > Number.MAX_SAFE_INTEGER){
+                    throw new Error("size of the iterable is greater than the max safe interger value")
+                }
             }
 
             return count;

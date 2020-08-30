@@ -63,19 +63,31 @@ test('IterableQuery.takeWhile', () => {
 });
 
 test('IterableQuery.takeLast', () => {
-    const elements = [1,2,3,4,5].asQuery();
-    expect(elements.takeLast(2).toArray()).toStrictEqual([4,5]);
-    expect(elements.takeLast(10).toArray()).toStrictEqual([1,2,3,4,5]);
-    expect(elements.takeLast(0).toArray()).toStrictEqual([]);
+    const array = [1,2,3,4,5].asQuery();
+    expect(array.takeLast(2).toArray()).toStrictEqual([4,5]);
+    expect(array.takeLast(10).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(array.takeLast(0).toArray()).toStrictEqual([]);
     expect(new Array<number>().asQuery().takeLast(2).toArray()).toStrictEqual([]);
+
+    const set = new Set([1,2,3,4,5]).asQuery();
+    expect(set.takeLast(2).toArray()).toStrictEqual([4,5]);
+    expect(set.takeLast(10).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(set.takeLast(0).toArray()).toStrictEqual([]);
+    expect(new Set<number>().asQuery().takeLast(2).toArray()).toStrictEqual([]);
 })
 
 test('IterableQuery.skipLast', () => {
-    const elements = [1,2,3,4,5].asQuery();
-    expect(elements.skipLast(2).toArray()).toStrictEqual([1,2,3]);
-    expect(elements.skipLast(4).toArray()).toStrictEqual([1]);
-    expect(elements.skipLast(10).toArray()).toStrictEqual([]);
+    const array = [1,2,3,4,5].asQuery();
+    expect(array.skipLast(2).toArray()).toStrictEqual([1,2,3]);
+    expect(array.skipLast(4).toArray()).toStrictEqual([1]);
+    expect(array.skipLast(10).toArray()).toStrictEqual([]);
     expect(new Array<number>().asQuery().skipLast(2).toArray()).toStrictEqual([]);
+
+    const set = new Set([1,2,3,4,5]).asQuery();
+    expect(set.skipLast(2).toArray()).toStrictEqual([1,2,3]);
+    expect(set.skipLast(4).toArray()).toStrictEqual([1]);
+    expect(set.skipLast(10).toArray()).toStrictEqual([]);
+    expect(new Set<number>().asQuery().skipLast(2).toArray()).toStrictEqual([]);
 })
 
 test('IterableQuery.append', () => {
@@ -387,6 +399,24 @@ test("IteratorQuery.fold", () => {
     expect(elements.fold(0, (prev, cur) => prev + cur)).toStrictEqual(10);
     expect(new Array<number>().asQuery().fold(10, (prev, cur) => prev + cur)).toStrictEqual(10);
 });
+
+test("IterableQuery.sum", () => {
+    const elements = [1,2,3,4].asQuery();
+    expect(elements.sum(x => x)).toStrictEqual(10);
+    expect(new Array<number>().asQuery().sum(x => x)).toBeUndefined();
+})
+
+test("IterableQuery.product", () => {
+    const elements = [1,2,3,4].asQuery();
+    expect(elements.product(x => x)).toStrictEqual(24);
+    expect(new Array<number>().asQuery().product(x => x)).toBeUndefined();
+})
+
+test("IterableQuery.average", () => {
+    const elements = [1,2,3,4].asQuery();
+    expect(elements.average(x => x)).toStrictEqual(2.5);
+    expect(new Array<number>().asQuery().average(x => x)).toBeUndefined();
+})
 
 test("IteratorQuery.partition", () => {
     const numbers = [1,2,3,4,5,6,7,8,9,10].asQuery();

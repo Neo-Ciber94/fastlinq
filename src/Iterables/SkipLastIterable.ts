@@ -24,20 +24,20 @@ export class SkipLastIterable<T> extends IterableIterator<T>{
 
     protected getNext(): IteratorResult<T, any> {
         let next = this.iterator.next();
-        if(!next){
-            return next;
-        }
 
-        while(this.items.length < this.count){
-            this.items.push(next.value);
-            next = this.iterator.next();
-
-            if(!next){
-                return iteratorDone();
+        while(!next.done){
+            if(this.items.length === this.count){
+                const ret = this.items.shift()!;
+                this.items.push(next.value);
+                return iteratorResult(ret);
             }
+            else{
+                this.items.push(next.value);
+            }
+
+            next = this.iterator.next();
         }
 
-        const ret = this.items.shift()!;
-        return iteratorResult(ret);
+        return iteratorDone();
     }
 }
