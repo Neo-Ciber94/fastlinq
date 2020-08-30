@@ -13,6 +13,8 @@ export interface Queryable<T> extends Iterable<T>{
     take(n: number) : Queryable<T>;
     skipWhile(predicate: (value: T) => boolean) : Queryable<T>;
     takeWhile(predicate: (value: T) => boolean) : Queryable<T>;
+    takeLast(count: number) : Queryable<T>;
+    skipLast(count: number) : Queryable<T>;
     append(value: T) : Queryable<T>;
     prepend(value: T) : Queryable<T>;
     concat(elements: Iterable<T>) : Queryable<T>;
@@ -53,10 +55,13 @@ export interface Queryable<T> extends Iterable<T>{
     containsAll(values: Iterable<T>) : boolean;
     sequenceEquals(values: Iterable<T>) : boolean;
     elementAt(index: number) : T | undefined;
+    //elementAtOrElse(index: number, defaultValue: T) : T;
     indexOf(value: T) : number | undefined;
     lastIndexOf(value: T) : number | undefined;
     first() : T | undefined;
     last() : T | undefined;
+    //firstOrElse(defaultValue: T) : T;
+    //lastOrElse(defaultValue: T) : T;
     find(predicate: (value: T) => boolean) : T | undefined;
     findLast(predicate: (value: T) => boolean) : T | undefined;
     findIndex(predicate: (value: T) => boolean) : number | undefined;
@@ -64,6 +69,7 @@ export interface Queryable<T> extends Iterable<T>{
     findIndices(predicate: (value: T) => boolean) : number[]
     single() : T | undefined;
     single(predicate: (value: T) => boolean) : T | undefined;
+    //singleOrElse(defaultValue: T) : T;
     every(predicate: (value: T) => boolean) : boolean;
     any() : boolean;
     any(predicate: (value: T) => boolean) : boolean;

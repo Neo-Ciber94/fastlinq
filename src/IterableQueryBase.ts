@@ -57,6 +57,34 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return new IterableQuery(iterable);
     }
 
+    takeLast(count: number): Queryable<T> {
+        if(count < 0){
+            throw new Error("count cannot be negative: " +count);
+        }
+
+        if(count === 0){
+            return Query.empty();
+        }
+
+        const array = new Array<T>();
+        for (const e of this) {
+            if(array.length < count){
+                array.push(e);
+            }
+            else{
+                array.shift();
+                array.push(e);
+            }
+        }
+
+        return new IterableArrayQuery(array);
+    }
+
+    skipLast(count: number): Queryable<T> {
+        const iterable = new SkipLastIterable(this, count);
+        return new IterableQuery(iterable);
+    }
+
     append(value: T): Queryable<T> {
         const iterable = new AppendPrependIterable(this, value, true);
         return new IterableQuery(iterable);
@@ -829,3 +857,5 @@ function getSizedIterableCount(iter: any) : number | undefined{
 
 // Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'
 import { IterableArrayQuery } from "./IterableArrayQuery";
+import { Query } from "./Query";import { SkipLastIterable } from "./Iterables/SkipLastIterable";
+

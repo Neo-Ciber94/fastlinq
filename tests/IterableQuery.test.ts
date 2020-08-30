@@ -62,6 +62,22 @@ test('IterableQuery.takeWhile', () => {
     expect(elements.takeWhile(e => e > 0).toArray()).toStrictEqual([1,2,3,4,5]);
 });
 
+test('IterableQuery.takeLast', () => {
+    const elements = [1,2,3,4,5].asQuery();
+    expect(elements.takeLast(2).toArray()).toStrictEqual([4,5]);
+    expect(elements.takeLast(10).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(elements.takeLast(0).toArray()).toStrictEqual([]);
+    expect(new Array<number>().asQuery().takeLast(2).toArray()).toStrictEqual([]);
+})
+
+test('IterableQuery.skipLast', () => {
+    const elements = [1,2,3,4,5].asQuery();
+    expect(elements.skipLast(2).toArray()).toStrictEqual([1,2,3]);
+    expect(elements.skipLast(4).toArray()).toStrictEqual([1]);
+    expect(elements.skipLast(10).toArray()).toStrictEqual([]);
+    expect(new Array<number>().asQuery().skipLast(2).toArray()).toStrictEqual([]);
+})
+
 test('IterableQuery.append', () => {
     const elements = [1,2,3].asQuery();
 

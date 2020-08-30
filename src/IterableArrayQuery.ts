@@ -4,10 +4,9 @@ import { IterableQueryBase } from "./IterableQueryBase";
 import { AppendPrependArrayIterable } from "./Iterables/AppendPredendIterable";
 import { IndexedArrayIterable, IndexedValue } from "./Iterables/IndexedIterable";
 import { MapArrayIterable } from "./Iterables/MapIterable";
-import { SkipArrayIterable } from "./Iterables/SkipIterable";
-import { TakeArrayIterable } from "./Iterables/TakeIterable";
 import { WhereArrayIterable } from "./Iterables/WhereIterable";
 import { SizedIterable } from "./Iterables/SizedIterable";
+import { ArrayPartition } from "./Iterables/ArrayPartition";
 
 export class IterableArrayQuery<T> extends IterableQueryBase<T> implements SizedIterable<T> {
     private readonly array: T[];
@@ -32,12 +31,22 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> implements Sized
     }
 
     take(count: number) : Queryable<T>{
-        const iterable = new TakeArrayIterable(this.array, count);
+        const iterable = ArrayPartition.take<T>(this.array, count);
         return new IterableQuery(iterable);
     }
 
     skip(count: number) : Queryable<T>{
-        const iterable = new SkipArrayIterable(this.array, count);
+        const iterable = ArrayPartition.skip<T>(this.array, count);
+        return new IterableQuery(iterable);
+    }
+
+    takeLast(count: number) : Queryable<T>{
+        const iterable = ArrayPartition.takeLast<T>(this.array, count);
+        return new IterableQuery(iterable);
+    }
+
+    skipLast(count: number) : Queryable<T>{
+        const iterable = ArrayPartition.skipLast<T>(this.array, count);
         return new IterableQuery(iterable);
     }
 
