@@ -4,7 +4,6 @@ import { IterableArrayQuery } from "./IterableArrayQuery";
 import { IterableGenerator } from "./Iterables/IterableGenerator";
 import { KeyValue } from "./Iterables/KeyValue";
 import { RangeIterable } from "./Iterables/RangeIterable";
-import { RepeatIterable } from "./Iterables/RepeatIterable";
 
 /**
  * Helper class for `IQuery<T>`.
@@ -35,8 +34,12 @@ export abstract class Query{
     }
 
     static repeat<T>(value: T, count: number) : Queryable<T>{
-        const iterable = new RepeatIterable(value, count);
-        return new IterableQuery(iterable);
+        function* gen() : Generator<T>{
+            for(let i = 0; i < count; i++){
+                yield value;
+            }
+        }
+        return new IterableQuery(gen());
     }
 
     static generate<T>(length: number, generator: (index: number, prev?: T) => T, seed?: T) : Queryable<T>{

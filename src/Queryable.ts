@@ -38,6 +38,8 @@ export interface Queryable<T> extends Iterable<T>{
     joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean) : Queryable<[T,R]>;
     zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult) : Queryable<TResult>;
     defaultIfEmpty(defaultValue: Iterable<T>) : Queryable<T>;
+    stepBy(n: number) : Queryable<T>;
+    repeat(n: number) : Queryable<T>;
     seek(action: (value: T) => void) : Queryable<T>;
     forEach(action: (value: T) => void) : void;
     reduce(reducer: (prev: T, current: T) => T) : T | undefined;

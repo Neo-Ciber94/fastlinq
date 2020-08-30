@@ -24,6 +24,10 @@ export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
     protected getNext(): IteratorResult<IndexedValue<T>, any> {
         const next = this.iterator.next();
 
+        if(this.index > Number.MAX_SAFE_INTEGER){
+            throw new Error("index value is greater than max safe integer value");
+        }
+
         if(next.done){
             return iteratorDone();
         }
@@ -50,6 +54,10 @@ export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>> i
     }
 
     protected getNext(): IteratorResult<IndexedValue<T>, any> {
+        if(this.index > Number.MAX_SAFE_INTEGER){
+            throw new Error("index value is greater than max safe integer value");
+        }
+
         if(this.index < this.source.length){
             return iteratorResult({
                 value: this.source[this.index],

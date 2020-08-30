@@ -361,7 +361,25 @@ test("IteratorQuery.zip", () => {
     ])
 });
 
-test("IteratorQuery.seek", () => {
+test("IterableQuery.defaultIfEmpty", () => {
+    expect([1,2,3].asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,2,3]);
+    expect(new Array<number>().asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,1,1]);
+});
+
+test("IterableQuery.stepBy", () => {
+    const elements = [1,2,3,4,5,6].asQuery();
+    expect(elements.stepBy(2).toArray()).toStrictEqual([2,4,6]);
+    expect(new Array<number>().asQuery().stepBy(3).toArray()).toStrictEqual([]);
+})
+
+test("IterableQuery.repeat", () => {
+    const elements = [1,2,3].asQuery();
+    expect(elements.repeat(0).toArray()).toStrictEqual([]);
+    expect(elements.repeat(2).toArray()).toStrictEqual([1,2,3,1,2,3]);
+    expect(new Array<number>().asQuery().repeat(2).toArray()).toStrictEqual([]);
+})
+
+test("IterableQuery.seek", () => {
     const elements = [1,2,3,4,5].asQuery();
 
     const e = elements.seek((n) => {
@@ -371,7 +389,7 @@ test("IteratorQuery.seek", () => {
     expect(e.toArray()).toStrictEqual([1,2,3,4,5]);
 });
 
-test("IteratorQuery.forEach", () => {
+test("IterableQuery.forEach", () => {
     const elements = [1,2,3,4,5].asQuery();
 
     elements.forEach((n) => {
@@ -379,21 +397,21 @@ test("IteratorQuery.forEach", () => {
     });
 });
 
-test("IteratorQuery.reduce", () => {
+test("IterableQuery.reduce", () => {
     const elements = [1,2,3,4].asQuery();
 
     expect(elements.reduce((prev, cur) => prev + cur)).toStrictEqual(10);
     expect(new Array<number>().asQuery().reduce((prev, cur) => prev + cur)).toBeUndefined();
 });
 
-test("IteratorQuery.reduce with seed", () => {
+test("IterableQuery.reduce with seed", () => {
     const elements = [1,2,3,4].asQuery();
 
     expect(elements.reduce((prev, cur) => prev + cur, 10)).toStrictEqual(20);
     expect(new Array<number>().asQuery().reduce((prev, cur) => prev + cur, 10)).toStrictEqual(10);
 });
 
-test("IteratorQuery.fold", () => {
+test("IterableQuery.fold", () => {
     const elements = [1,2,3,4].asQuery();
 
     expect(elements.fold(0, (prev, cur) => prev + cur)).toStrictEqual(10);
@@ -418,7 +436,7 @@ test("IterableQuery.average", () => {
     expect(new Array<number>().asQuery().average(x => x)).toBeUndefined();
 })
 
-test("IteratorQuery.partition", () => {
+test("IterableQuery.partition", () => {
     const numbers = [1,2,3,4,5,6,7,8,9,10].asQuery();
 
     const [even, odd] = numbers.partition((n) => n % 2 === 0);
@@ -426,44 +444,44 @@ test("IteratorQuery.partition", () => {
     expect(odd).toStrictEqual([1,3,5,7,9]);
 });
 
-test("IteratorQuery.min", () => {
+test("IterableQuery.min", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.min()).toStrictEqual(1);
     expect(new Array<number>().asQuery().min()).toBeUndefined();
 });
 
-test("IteratorQuery.min with compare", () => {
+test("IterableQuery.min with compare", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.min((x,y) => Ordering.of(x - y))).toStrictEqual(1);
     expect(new Array<number>().asQuery().min()).toBeUndefined();
 });
 
-test("IteratorQuery.max", () => {
+test("IterableQuery.max", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.max()).toStrictEqual(5);
     expect(new Array<number>().asQuery().max()).toBeUndefined();
 });
 
-test("IteratorQuery.max with compare", () => {
+test("IterableQuery.max with compare", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.max((x,y) => Ordering.of(x - y))).toStrictEqual(5);
     expect(new Array<number>().asQuery().max()).toBeUndefined();
 });
 
-test("IteratorQuery.minmax", () => {
+test("IterableQuery.minmax", () => {
     const elements = [5,1,4,2,3].asQuery();
     expect(elements.minmax()).toStrictEqual([1,5]);
     expect(new Array<number>().asQuery().minmax()).toBeUndefined();
 })
 
-test("IteratorQuery.minmax with compare", () => {
+test("IterableQuery.minmax with compare", () => {
     const elements = [5,1,4,2,3].asQuery();
     const compare = (x: number, y: number) => Ordering.of(x - y);
     expect(elements.minmax(compare)).toStrictEqual([1,5]);
     expect(new Array<number>().asQuery().minmax(compare)).toBeUndefined();
 })
 
-test("IteratorQuery.contains", () => {
+test("IterableQuery.contains", () => {
     const numbers = [5,1,2,3,2].asQuery();
     expect(numbers.contains(5)).toBeTruthy();
     expect(numbers.contains(1)).toBeTruthy();
@@ -472,7 +490,7 @@ test("IteratorQuery.contains", () => {
     expect(numbers.contains(0)).toBeFalsy();
 });
 
-test("IteratorQuery.contains with compare", () => {
+test("IterableQuery.contains with compare", () => {
     interface Person{
         readonly id: number;
         readonly name: string;
@@ -490,7 +508,7 @@ test("IteratorQuery.contains with compare", () => {
     expect(persons.asQuery().contains(p => p.id === 4)).toBeFalsy();
 });
 
-test("IteratorQuery.containsAll", () => {
+test("IterableQuery.containsAll", () => {
     const elements = [1,2,3,4,5].asQuery();
 
     expect(elements.containsAll([1,2,3])).toBeTruthy();
@@ -499,7 +517,7 @@ test("IteratorQuery.containsAll", () => {
     expect(elements.containsAll([6,7,8])).toBeFalsy();
 });
 
-test("IteratorQuery.sequenceEquals", () => {
+test("IterableQuery.sequenceEquals", () => {
     const elements = [1,2,3,4,5].asQuery();
 
     expect(elements.sequenceEquals([1,2,3,4,5])).toBeTruthy();
@@ -639,11 +657,6 @@ test("IterableQuery.isSortedByDecending", () => {
     expect([5,4,3,2,1].asQuery().isSortedByDecending(e => e)).toBeTruthy();
     expect([3,2,1].asQuery().isSortedByDecending(e => e)).toBeTruthy();
     expect([1,3,2,5,4].asQuery().isSortedByDecending(e => e)).toBeFalsy();
-});
-
-test("IterableQuery.defaultIfEmpty", () => {
-    expect([1,2,3].asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,2,3]);
-    expect(new Array<number>().asQuery().defaultIfEmpty([1,1,1]).toArray()).toStrictEqual([1,1,1]);
 });
 
 test("IterableQuery.isEmpty", () => {

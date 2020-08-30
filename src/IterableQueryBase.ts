@@ -285,6 +285,16 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return this;
     }
 
+    stepBy(n: number): Queryable<T> {
+        const iterable = new StepByIterator(this, n);
+        return new IterableQuery(iterable);
+    }
+
+    repeat(n: number): Queryable<T> {
+        const iterable = new RepeatIterable(this, n);
+        return new IterableQuery(iterable);
+    }
+
     seek(action: (value: T) => void): Queryable<T> {
         this.forEach(action);
         return this;
@@ -915,4 +925,6 @@ function getSizedIterableCount(iter: any) : number | undefined{
 // Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'
 import { IterableArrayQuery } from "./IterableArrayQuery";
 import { Query } from "./Query";import { SkipLastIterable } from "./Iterables/SkipLastIterable";
+import { StepByIterator } from "./Iterables/StepByIterable";
+import { RepeatIterable } from "./Iterables/RepeatIterable";
 
