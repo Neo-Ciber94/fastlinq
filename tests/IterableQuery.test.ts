@@ -535,6 +535,17 @@ test("IterableQuery.elementAt", () => {
     expect(elements.elementAt(4)).toStrictEqual(5);
 });
 
+test("IterableQuery.elementAtOrElse", () => {
+    const elements = [1,2,3,4,5].asQuery();
+    expect(elements.elementAtOrElse(0, -1)).toStrictEqual(1);
+    expect(elements.elementAtOrElse(1, -1)).toStrictEqual(2);
+    expect(elements.elementAtOrElse(2, -1)).toStrictEqual(3);
+    expect(elements.elementAtOrElse(3, -1)).toStrictEqual(4);
+    expect(elements.elementAtOrElse(4, -1)).toStrictEqual(5);
+    expect(elements.elementAtOrElse(10, -1)).toStrictEqual(-1);
+    expect(elements.elementAtOrElse(-2, -1)).toStrictEqual(-1);
+})
+
 test("IterableQuery.indexOf", () => {
     const elements = [1,2,3,4,5].asQuery();
 
@@ -556,18 +567,28 @@ test("IterableQuery.lastIndexOf", () => {
 });
 
 test("IterableQuery.first", () => {
-    const elements = [1,2,3,4,5].asQuery();
-
-    expect(elements.first()).toStrictEqual(1);
+    expect([1,2,3,4,5].asQuery().first()).toStrictEqual(1);
     expect(new Array<number>().asQuery().first()).toBeUndefined();
+    expect([1,5,2,4,3].asQuery().first(e => e > 2)).toStrictEqual(5);
 });
 
 test("IterableQuery.last", () => {
-    const elements = [1,2,3,4,5].asQuery();
-
-    expect(elements.last()).toStrictEqual(5);
+    expect([1,2,3,4,5].asQuery().last()).toStrictEqual(5);
     expect(new Array<number>().asQuery().last()).toBeUndefined();
+    expect([1,4,5,3,1].asQuery().last(e => e > 2)).toStrictEqual(3);
 });
+
+test("IterableQuery.firstOrElse", () => {
+    expect([1,2,3,4,5].asQuery().firstOrElse(-1)).toStrictEqual(1);
+    expect(new Array<number>().asQuery().firstOrElse(-1)).toStrictEqual(-1);
+    expect([3,4,2,1,5].asQuery().firstOrElse(-1, e => e > 3)).toStrictEqual(4);
+})
+
+test("IterableQuery.lastOrElse", () => {
+    expect([1,2,3,4,5].asQuery().lastOrElse(-1)).toStrictEqual(5);
+    expect(new Array<number>().asQuery().lastOrElse(-1)).toStrictEqual(-1);
+    expect([3,4,2,1,5].asQuery().lastOrElse(-1, e => e > 3)).toStrictEqual(5);
+})
 
 test("IterableQuery.find", () => {
     const elements = [1,2,3,4,5].asQuery();
@@ -622,6 +643,14 @@ test("IterableQuery.single with predicate", () => {
     expect([1,1,2,2,3,3,4,4,5,5].asQuery().single(e => e === 2)).toBeUndefined();
     expect(new Array<number>().asQuery().single()).toBeUndefined();
 });
+
+test("IterableQuery.singleOrElse", () => {
+    expect([1,2,3,4,5].asQuery().singleOrElse(-1)).toStrictEqual(-1);
+    expect([3].asQuery().singleOrElse(-1)).toStrictEqual(3);
+    expect(new Array<number>().asQuery().singleOrElse(-1)).toStrictEqual(-1);
+    expect([5,1,4,3,2].asQuery().singleOrElse(-1, e => e > 2)).toStrictEqual(-1);
+    expect([5,5,1,4,4,3,3,2,2].asQuery().singleOrElse(-1, e => e === 1)).toStrictEqual(1);
+})
 
 test("IterableQuery.every", () => {
     expect([1,2,3,4].asQuery().every(e => e > 0)).toBeTruthy();

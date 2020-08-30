@@ -72,14 +72,34 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> implements Sized
         return new IterableQuery(iterable);
     }
 
-    first(): T | undefined {
+    first(predicate?: any): T | undefined {
+        if(predicate){
+            // tslint:disable-next-line: prefer-for-of
+            for(let i = 0; i < this.array.length; i++){
+                if(predicate(this.array[i])){
+                    return this.array[i];
+                }
+            }
+            return undefined;
+        }
         return this.array[0];
     }
 
-    last(): T | undefined {
+    last(predicate?: any): T | undefined {
         if(this.array.length === 0){
             return undefined;
         }
+
+        if(predicate){
+            // tslint:disable-next-line: prefer-for-of
+            for(let i = this.array.length - 1; i >= 0; i--){
+                if(predicate(this.array[i])){
+                    return this.array[i];
+                }
+            }
+            return undefined;
+        }
+
         return this.array[this.array.length - 1];
     }
 

@@ -532,6 +532,10 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return undefined;
     }
 
+    elementAtOrElse(index: number, defaultValue: T): T {
+        return this.elementAt(index)?? defaultValue;
+    }
+
     indexOf(value: T): number | undefined {
         if (this.isEmpty()) {
             return undefined;
@@ -568,19 +572,54 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return lastIndex;
     }
 
-    first(): T | undefined {
-        const iterator = this[Symbol.iterator]();
-        return iterator.next().value;
+    first(): T | undefined;
+    first(predicate: (value: T) => boolean): T | undefined;
+    first(predicate?: any) {
+        if(predicate){
+            for (const e of this) {
+                if(predicate(e)){
+                    return e;
+                }
+            }
+            return undefined;
+        }
+        else{
+            const iterator = this[Symbol.iterator]();
+            return iterator.next().value;
+        }
     }
 
-    last(): T | undefined {
-        let last: T | undefined;
+    last(): T | undefined;
+    last(predicate: (value: T) => boolean): T | undefined;
+    last(predicate?: any) {
+        let last : T | undefined;
 
-        for (const e of this) {
-            last = e;
+        if(predicate){
+            for(const e of this){
+                if(predicate(e)){
+                    last = e;
+                }
+            }
+        }
+        else{
+            for (const e of this) {
+                last = e;
+            }
         }
 
         return last;
+    }
+
+    firstOrElse(defaultValue: T): T;
+    firstOrElse(defaultValue: T, predicate: (value: T) => boolean): T;
+    firstOrElse(defaultValue: any, predicate?: any) {
+        return this.first(predicate)?? defaultValue;
+    }
+
+    lastOrElse(defaultValue: T): T;
+    lastOrElse(defaultValue: T, predicate: (value: T) => boolean): T;
+    lastOrElse(defaultValue: any, predicate?: any) {
+        return this.last(predicate)?? defaultValue;
     }
 
     find(predicate: (value: T) => boolean): T | undefined {
@@ -678,6 +717,12 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
 
         return result;
+    }
+
+    singleOrElse(defaultValue: T): T;
+    singleOrElse(defaultValue: T, predicate: (value: T) => boolean): T;
+    singleOrElse(defaultValue: any, predicate?: any) {
+        return this.single(predicate)?? defaultValue;
     }
 
     every(predicate: (value: T) => boolean): boolean {

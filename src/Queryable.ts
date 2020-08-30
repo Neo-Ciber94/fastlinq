@@ -60,13 +60,17 @@ export interface Queryable<T> extends Iterable<T>{
     containsAll(values: Iterable<T>) : boolean;
     sequenceEquals(values: Iterable<T>) : boolean;
     elementAt(index: number) : T | undefined;
-    // elementAtOrElse(index: number, defaultValue: T) : T;
+    elementAtOrElse(index: number, defaultValue: T) : T;
     indexOf(value: T) : number | undefined;
     lastIndexOf(value: T) : number | undefined;
     first() : T | undefined;
+    first(predicate: (value: T) => boolean) : T | undefined;
     last() : T | undefined;
-    // firstOrElse(defaultValue: T) : T;
-    // lastOrElse(defaultValue: T) : T;
+    last(predicate: (value: T) => boolean) : T | undefined;
+    firstOrElse(defaultValue: T) : T;
+    firstOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
+    lastOrElse(defaultValue: T) : T;
+    lastOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
     find(predicate: (value: T) => boolean) : T | undefined;
     findLast(predicate: (value: T) => boolean) : T | undefined;
     findIndex(predicate: (value: T) => boolean) : number | undefined;
@@ -74,7 +78,8 @@ export interface Queryable<T> extends Iterable<T>{
     findIndices(predicate: (value: T) => boolean) : number[]
     single() : T | undefined;
     single(predicate: (value: T) => boolean) : T | undefined;
-    // singleOrElse(defaultValue: T) : T;
+    singleOrElse(defaultValue: T) : T;
+    singleOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
     every(predicate: (value: T) => boolean) : boolean;
     any() : boolean;
     any(predicate: (value: T) => boolean) : boolean;
