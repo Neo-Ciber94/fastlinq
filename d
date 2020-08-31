@@ -1,0 +1,83 @@
+[33mcommit a53691d85269dad29126e2ea69d172f1b535ad37[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mtslinquery/master[m[33m)[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Sun Aug 30 19:20:37 2020 -0400
+
+    Added predicate search for Queryable methods first and last
+
+[33mcommit 1338d6efa7340f92f69bc02b7943280901a58c2f[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Sun Aug 30 13:29:56 2020 -0400
+
+    Added Queryable.repeat, Queryable.stepBy
+
+[33mcommit 2835539db689728843e616ee90435bdb7123808f[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Sun Aug 30 12:09:51 2020 -0400
+
+    Added sum, product and average to Queryable, also a safe count() to throw exception when is greater than Number.MAX_SAFE_INTEGER
+
+[33mcommit 5080a11561cfa52dcca950ba98406758dc2c2476[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Sun Aug 30 02:44:12 2020 -0400
+
+    removed SkipArrayIterable and TakeArrayIterable for new type ArrayPartition
+
+[33mcommit 975a218cd91dbce0e7cb9651951a9973c8b8d923[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Sat Aug 29 15:18:51 2020 -0400
+
+    Added minmax to Queryable
+
+[33mcommit 1d71d93c2b900c85bf182a8435cbdd8515deae9b[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Thu Aug 27 22:54:57 2020 -0400
+
+    renamed IQuery interface to Queryable
+
+[33mcommit edd223cfbef56ceb366f83f1b68359bf2e51ab5b[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 21:28:00 2020 -0400
+
+    Remove TThis from iterable due inability to check the actual this type
+
+[33mcommit 6e20852a1f9219d34ed37e18aba290057b765428[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 16:39:55 2020 -0400
+
+    Added This type to the return of IterableIterator.clone
+
+[33mcommit 1fa443ce9e8da5d282b5fa3e2b0777f9f542e222[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 15:20:07 2020 -0400
+
+    All tests passed for IterableQuery
+
+[33mcommit be396c156485fee9bc813205e6e87b645a28fb30[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 11:24:35 2020 -0400
+
+    IterableIterators implementations moved to Iterables/
+
+[33mcommit cf75431b0f307260ccd6f56a097f24f1eff31bbf[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 02:29:11 2020 -0400
+
+    Ordering changed from enum to class due enum implicit conversions
+
+[33mcommit 5307f35aa83fc9a100d9a3cc7130680ce460125b[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Wed Aug 26 01:22:45 2020 -0400
+
+    Implementing IterableIterator for IQuery operation iterators
+
+[33mcommit 6f29965d184d3a2d8ec3c06bc517bb0130d777d2[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Tue Aug 25 20:13:39 2020 -0400
+
+    Refactored some iterables to use IterableIterator<T>
+
+[33mcommit e8c0050468305df3ce6fe00ecc86d11182569f8e[m
+Author: Freddy L P.B <freddy_luis_94@hotmail.com>
+Date:   Mon Aug 24 17:08:46 2020 -0400
+
+    Initial commit

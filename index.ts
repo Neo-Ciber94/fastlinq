@@ -1,8 +1,26 @@
 /* tslint:disable: no-console max-classes-per-file */
 
-import { measureAverageTimeAndLog, repeat } from "./src/Iterables/Utils";
-import "./src/Query";
-import { Queryable } from "./src/Queryable";
+import { measureAverageTimeAndLog } from './src/Iterables/Utils';
+import './src/Query';
+import { Query } from './src/Query';
+
+const items = Query.range(0, 1000_000).toArray();
+function* numbers() : globalThis.Generator<number>{
+  yield 0;
+}
+measureAverageTimeAndLog(() => {
+  const result = items
+    .filter(e => e <= 800_000)
+    .map(e => e * 2)
+    .length
+})
+
+measureAverageTimeAndLog(() => {
+  const result = items.asQuery()
+    .where(e => e <= 800_000)
+    .map(e => e * 2)
+    .count()
+})
 
 abstract class Generator {
   abstract nextID(): number;
@@ -109,7 +127,3 @@ class PersonGenerator extends ObjectGenerator<Person>{
 
 const gen = new SimpleGenerator();
 const personGen = new PersonGenerator();
-personGen.generate(50, gen).asQuery()
-    .where(e => e.age > 18)
-    .map(e => ({name: e.firstName, age: e.age}))
-    .forEach(console.log)
