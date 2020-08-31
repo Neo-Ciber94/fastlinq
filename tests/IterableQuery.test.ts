@@ -4,8 +4,11 @@ import { IterableQuery } from "../src/IterableQuery";
 import "../src/Query";
 
 test('IterableQuery.map', () => {
-    const elements = [1,2,3,4,5].asQuery().map(e => e * 2);
-    expect(elements.toArray()).toStrictEqual([2,4,6,8,10]);
+    const array = [1,2,3,4,5].asQuery().map(e => e * 2);
+    expect(array.toArray()).toStrictEqual([2,4,6,8,10]);
+
+    const set = new Set([1,2,3,4,5]).asQuery().map(e => e * 2);
+    expect(set.toArray()).toStrictEqual([2,4,6,8,10]);
 });
 
 test('IterableQuery.flatMap', () => {
@@ -24,42 +27,39 @@ test('IterableQuery.flatMap', () => {
 });
 
 test('IterableQuery.where', () => {
-    const elements = [1,2,3,4,5,6,7,8,9,10].asQuery().where(e => e % 2 === 0);
-    expect(elements.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
+    const array = [1,2,3,4,5,6,7,8,9,10].asQuery().where(e => e % 2 === 0);
+    expect(array.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
+
+    const set = new Set([1,2,3,4,5,6,7,8,9,10]).asQuery().where(e => e % 2 === 0);
+    expect(set.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
 });
 
 test('IterableQuery.take', () => {
-    const elements = [1,2,3,4,5].asQuery();
+    const array = [1,2,3,4,5].asQuery();
+    expect(array.take(3).toArray()).toStrictEqual([1,2,3]);
+    expect(array.take(0).toArray()).toStrictEqual([]);
+    expect(array.take(5).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(array.take(20).toArray()).toStrictEqual([1,2,3,4,5]);
 
-    expect(elements.take(3).toArray()).toStrictEqual([1,2,3]);
-    expect(elements.take(0).toArray()).toStrictEqual([]);
-    expect(elements.take(5).toArray()).toStrictEqual([1,2,3,4,5]);
-    expect(elements.take(20).toArray()).toStrictEqual([1,2,3,4,5]);
+    const set = new Set([1,2,3,4,5]).asQuery();
+    expect(set.take(3).toArray()).toStrictEqual([1,2,3]);
+    expect(set.take(0).toArray()).toStrictEqual([]);
+    expect(set.take(5).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(set.take(20).toArray()).toStrictEqual([1,2,3,4,5]);
 });
 
 test('IterableQuery.skip', () => {
-    const elements = [1,2,3,4,5].asQuery();
+    const array = [1,2,3,4,5].asQuery();
+    expect(array.skip(3).toArray()).toStrictEqual([4,5]);
+    expect(array.skip(0).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(array.skip(5).toArray()).toStrictEqual([]);
+    expect(array.skip(20).toArray()).toStrictEqual([]);
 
-    expect(elements.skip(3).toArray()).toStrictEqual([4,5]);
-    expect(elements.skip(0).toArray()).toStrictEqual([1,2,3,4,5]);
-    expect(elements.skip(5).toArray()).toStrictEqual([]);
-    expect(elements.skip(20).toArray()).toStrictEqual([]);
-});
-
-test('IterableQuery.skipWhile', () => {
-    const elements = [1,2,3,4,5].asQuery();
-
-    expect(elements.skipWhile(e => e < 3).toArray()).toStrictEqual([3,4,5]);
-    expect(elements.skipWhile(e => e > 2).toArray()).toStrictEqual([1,2,3,4,5]);
-    expect(elements.skipWhile(e => e > 0).toArray()).toStrictEqual([]);
-});
-
-test('IterableQuery.takeWhile', () => {
-    const elements = [1,2,3,4,5].asQuery();
-
-    expect(elements.takeWhile(e => e < 3).toArray()).toStrictEqual([1,2]);
-    expect(elements.takeWhile(e => e > 2).toArray()).toStrictEqual([]);
-    expect(elements.takeWhile(e => e > 0).toArray()).toStrictEqual([1,2,3,4,5]);
+    const set = new Set([1,2,3,4,5]).asQuery();
+    expect(set.skip(3).toArray()).toStrictEqual([4,5]);
+    expect(set.skip(0).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(set.skip(5).toArray()).toStrictEqual([]);
+    expect(set.skip(20).toArray()).toStrictEqual([]);
 });
 
 test('IterableQuery.takeLast', () => {
@@ -90,18 +90,40 @@ test('IterableQuery.skipLast', () => {
     expect(new Set<number>().asQuery().skipLast(2).toArray()).toStrictEqual([]);
 })
 
-test('IterableQuery.append', () => {
-    const elements = [1,2,3].asQuery();
+test('IterableQuery.skipWhile', () => {
+    const elements = [1,2,3,4,5].asQuery();
 
-    expect(elements.append(4).toArray()).toStrictEqual([1,2,3,4]);
-    expect(elements.append(4).append(5).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(elements.skipWhile(e => e < 3).toArray()).toStrictEqual([3,4,5]);
+    expect(elements.skipWhile(e => e > 2).toArray()).toStrictEqual([1,2,3,4,5]);
+    expect(elements.skipWhile(e => e > 0).toArray()).toStrictEqual([]);
+});
+
+test('IterableQuery.takeWhile', () => {
+    const elements = [1,2,3,4,5].asQuery();
+
+    expect(elements.takeWhile(e => e < 3).toArray()).toStrictEqual([1,2]);
+    expect(elements.takeWhile(e => e > 2).toArray()).toStrictEqual([]);
+    expect(elements.takeWhile(e => e > 0).toArray()).toStrictEqual([1,2,3,4,5]);
+});
+
+test('IterableQuery.append', () => {
+    const array = [1,2,3].asQuery();
+    expect(array.append(4).toArray()).toStrictEqual([1,2,3,4]);
+    expect(array.append(4).append(5).toArray()).toStrictEqual([1,2,3,4,5]);
+
+    const set = new Set([1,2,3]).asQuery();
+    expect(set.append(4).toArray()).toStrictEqual([1,2,3,4]);
+    expect(set.append(4).append(5).toArray()).toStrictEqual([1,2,3,4,5]);
 });
 
 test('IterableQuery.prepend', () => {
-    const elements = [1,2,3].asQuery();
+    const array = [1,2,3].asQuery();
+    expect(array.prepend(0).toArray()).toStrictEqual([0,1,2,3]);
+    expect(array.prepend(0).prepend(-1).toArray()).toStrictEqual([-1,0,1,2,3]);
 
-    expect(elements.prepend(0).toArray()).toStrictEqual([0,1,2,3]);
-    expect(elements.prepend(0).prepend(-1).toArray()).toStrictEqual([-1,0,1,2,3]);
+    const set = new Set([1,2,3]).asQuery();
+    expect(set.prepend(0).toArray()).toStrictEqual([0,1,2,3]);
+    expect(set.prepend(0).prepend(-1).toArray()).toStrictEqual([-1,0,1,2,3]);
 });
 
 test('IterableQuery.concat', () => {
@@ -112,9 +134,7 @@ test('IterableQuery.concat', () => {
 });
 
 test('IterableQuery.indexed', () => {
-    const elements = ["Apple", "Orange", "Pear"].asQuery();
-
-    const array = elements.indexed().toArray();
+    const array = ["Apple", "Orange", "Pear"].asQuery().indexed().toArray();
     expect(array[0].index).toStrictEqual(0);
     expect(array[0].value).toStrictEqual("Apple");
 
@@ -123,6 +143,16 @@ test('IterableQuery.indexed', () => {
 
     expect(array[2].index).toStrictEqual(2);
     expect(array[2].value).toStrictEqual("Pear");
+
+    const set = new Set(["Apple", "Orange", "Pear"]).asQuery().indexed().toArray();
+    expect(set[0].index).toStrictEqual(0);
+    expect(set[0].value).toStrictEqual("Apple");
+
+    expect(set[1].index).toStrictEqual(1);
+    expect(set[1].value).toStrictEqual("Orange");
+
+    expect(set[2].index).toStrictEqual(2);
+    expect(set[2].value).toStrictEqual("Pear");
 });
 
 test('IterableQuery.distinct', () => {
@@ -390,9 +420,13 @@ test("IterableQuery.seek", () => {
 });
 
 test("IterableQuery.forEach", () => {
-    const elements = [1,2,3,4,5].asQuery();
+    const array = [1,2,3,4,5].asQuery();
+    array.forEach((n) => {
+        expect([1,2,3,4,5].includes(n)).toBeTruthy();
+    });
 
-    elements.forEach((n) => {
+    const set = [1,2,3,4,5].asQuery();
+    set.forEach((n) => {
         expect([1,2,3,4,5].includes(n)).toBeTruthy();
     });
 });
@@ -526,13 +560,19 @@ test("IterableQuery.sequenceEquals", () => {
 });
 
 test("IterableQuery.elementAt", () => {
-    const elements = [1,2,3,4,5].asQuery();
+    const array = [1,2,3,4,5].asQuery();
+    expect(array.elementAt(0)).toStrictEqual(1);
+    expect(array.elementAt(1)).toStrictEqual(2);
+    expect(array.elementAt(2)).toStrictEqual(3);
+    expect(array.elementAt(3)).toStrictEqual(4);
+    expect(array.elementAt(4)).toStrictEqual(5);
 
-    expect(elements.elementAt(0)).toStrictEqual(1);
-    expect(elements.elementAt(1)).toStrictEqual(2);
-    expect(elements.elementAt(2)).toStrictEqual(3);
-    expect(elements.elementAt(3)).toStrictEqual(4);
-    expect(elements.elementAt(4)).toStrictEqual(5);
+    const set = new Set([1,2,3,4,5]).asQuery();
+    expect(set.elementAt(0)).toStrictEqual(1);
+    expect(set.elementAt(1)).toStrictEqual(2);
+    expect(set.elementAt(2)).toStrictEqual(3);
+    expect(set.elementAt(3)).toStrictEqual(4);
+    expect(set.elementAt(4)).toStrictEqual(5);
 });
 
 test("IterableQuery.elementAtOrElse", () => {
@@ -570,12 +610,20 @@ test("IterableQuery.first", () => {
     expect([1,2,3,4,5].asQuery().first()).toStrictEqual(1);
     expect(new Array<number>().asQuery().first()).toBeUndefined();
     expect([1,5,2,4,3].asQuery().first(e => e > 2)).toStrictEqual(5);
+
+    expect(new Set([1,2,3,4,5]).asQuery().first()).toStrictEqual(1);
+    expect(new Set<number>().asQuery().first()).toBeUndefined();
+    expect(new Set([1,5,2,4,3]).asQuery().first(e => e > 2)).toStrictEqual(5);
 });
 
 test("IterableQuery.last", () => {
     expect([1,2,3,4,5].asQuery().last()).toStrictEqual(5);
     expect(new Array<number>().asQuery().last()).toBeUndefined();
     expect([1,4,5,3,1].asQuery().last(e => e > 2)).toStrictEqual(3);
+
+    expect(new Set([1,2,3,4,5]).asQuery().last()).toStrictEqual(5);
+    expect(new Set<number>().asQuery().last()).toBeUndefined();
+    expect(new Set([1,4,5,3,1]).asQuery().last(e => e > 2)).toStrictEqual(3);
 });
 
 test("IterableQuery.firstOrElse", () => {
@@ -636,6 +684,11 @@ test("IterableQuery.single", () => {
     expect([1,2].asQuery().single()).toBeUndefined();
     expect([1].asQuery().single()).toStrictEqual(1);
     expect(new Array<number>().asQuery().single()).toBeUndefined();
+
+    expect(new Set([1,2,3,4,5]).asQuery().single()).toBeUndefined();
+    expect(new Set([1,2]).asQuery().single()).toBeUndefined();
+    expect(new Set([1]).asQuery().single()).toStrictEqual(1);
+    expect(new Set<number>().asQuery().single()).toBeUndefined();
 });
 
 test("IterableQuery.single with predicate", () => {
@@ -688,22 +741,30 @@ test("IterableQuery.isSortedByDecending", () => {
     expect([1,3,2,5,4].asQuery().isSortedByDecending(e => e)).toBeFalsy();
 });
 
-test("IterableQuery.isEmpty", () => {
-    expect(new Array<number>().asQuery().isEmpty()).toBeTruthy();
-    expect([1].asQuery().isEmpty()).toBeFalsy();
-    expect([1,2,3].asQuery().isEmpty()).toBeFalsy();
-});
-
 test("IterableQuery.count", () => {
     expect([1,2,3].asQuery().count()).toStrictEqual(3);
     expect(new Array<number>().asQuery().count()).toStrictEqual(0);
-    expect(new IterableQuery([1,2,3]).count()).toStrictEqual(3);
+    expect(new Set<number>().asQuery().count()).toStrictEqual(0);
+    expect(new Set([1,2,3]).asQuery().count()).toStrictEqual(3);
 });
 
 test("IterableQuery.count with predicate", () => {
     expect([1,2,3,4,5].asQuery().count(e => e > 2)).toStrictEqual(3);
     expect([1,2,3,4,5].asQuery().count(e => e > 5)).toStrictEqual(0);
-    expect(new IterableQuery([1,2,3]).count(e => e > 1)).toStrictEqual(2);
+
+    expect(new Set([1,2,3,4,5]).asQuery().count(e => e > 2)).toStrictEqual(3);
+    expect(new Set([1,2,3,4,5]).asQuery().count(e => e > 5)).toStrictEqual(0);
+    expect(new Set([1,2,3]).asQuery().count(e => e > 1)).toStrictEqual(2);
+});
+
+test("IterableQuery.isEmpty", () => {
+    expect(new Array<number>().asQuery().isEmpty()).toBeTruthy();
+    expect([1].asQuery().isEmpty()).toBeFalsy();
+    expect([1,2,3].asQuery().isEmpty()).toBeFalsy();
+
+    expect(new Set<number>().asQuery().isEmpty()).toBeTruthy();
+    expect(new Set([1]).asQuery().isEmpty()).toBeFalsy();
+    expect(new Set([1,2,3]).asQuery().isEmpty()).toBeFalsy();
 });
 
 test("IterableQuery.groupBy", () => {
