@@ -4,23 +4,30 @@ import { measureAverageTimeAndLog } from './src/Iterables/Utils';
 import './src/Query';
 import { Query } from './src/Query';
 
-const items = Query.range(0, 1000_000).toArray();
-function* numbers() : globalThis.Generator<number>{
-  yield 0;
-}
-measureAverageTimeAndLog(() => {
-  const result = items
-    .filter(e => e <= 800_000)
-    .map(e => e * 2)
-    .length
-})
+class RangeEnumerator implements EnumeratorEnumerable<number>{
+  private index: number = 0;
+  next(): IteratorResult<number, any> {
+    if(this.index < 10){
+      return { value: this.index++}
+    }
 
-measureAverageTimeAndLog(() => {
-  const result = items.asQuery()
-    .where(e => e <= 800_000)
-    .map(e => e * 2)
-    .count()
-})
+    return { value: undefined, done: true }
+  }
+
+  [Symbol.iterator](): Iterator<number, any, undefined> {
+    return this;
+  }
+}
+
+const range = new RangeEnumerator();
+for (const e of range) {
+  console.log(e);
+}
+
+const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
+  .where(e => e > 0 && e <= 5)
+  .take(3)
+  //.map(e => e * 2)
 
 abstract class Generator {
   abstract nextID(): number;

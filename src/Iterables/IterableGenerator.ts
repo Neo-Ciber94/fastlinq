@@ -1,7 +1,7 @@
 import { IterableQueryBase } from "../IterableQueryBase";
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class IterableGenerator<T> extends IterableIterator<T> {
+export class IterableGenerator<T> implements IterableIterator<T> {
     private readonly generator: (index: number, prev?: T) => T;
     private readonly seed?: T;
     private readonly length: number;
@@ -9,8 +9,6 @@ export class IterableGenerator<T> extends IterableIterator<T> {
     private prev?: T;
 
     constructor(length: number, generator: (index: number, prev?: T) => T, seed?: T){
-        super();
-
         if(length < 0){
             throw new Error("length cannot be 0");
         }
@@ -21,11 +19,11 @@ export class IterableGenerator<T> extends IterableIterator<T> {
         this.prev = seed;
     }
 
-    protected clone(): IterableIterator<T> {
+    [Symbol.iterator](): IterableIterator<T> {
         return new IterableGenerator(this.length, this.generator, this.seed);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         if(this.index < this.length){
             const next = this.generator(this.index, this.prev);
             this.prev = next;

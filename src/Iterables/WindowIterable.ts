@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class WindowIterable<T> extends IterableIterator<T[]> {
+export class WindowIterable<T> implements IterableIterator<T[]> {
     private readonly source: Iterable<T>;
     private readonly elements: T[];
     private readonly size: number;
@@ -11,18 +11,17 @@ export class WindowIterable<T> extends IterableIterator<T[]> {
             throw new Error("Invalid window size, should be greater than 0: " +size);
         }
 
-        super();
         this.source = iterable;
         this.elements = Array.from(iterable);
         this.size = size;
         this.index = 0;
     }
 
-    protected clone(): WindowIterable<T> {
+    [Symbol.iterator](): WindowIterable<T> {
         return new WindowIterable(this.source, this.size);
     }
 
-    protected getNext(): IteratorResult<T[], any> {
+    next(): IteratorResult<T[], any> {
         if((this.index + this.size) <= this.elements.length){
             const array = new Array<T>();
             const remaining = this.elements.length - this.index;

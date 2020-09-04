@@ -953,7 +953,7 @@ function iterableToString(iterable: any, options: ToStringOptions) : string{
 
 function getSizedIterableCount(iter: any) : number | undefined{
     function isSizedIterable(obj: any) : obj is SizedIterable<unknown>{
-        return obj.count !== undefined;
+        return obj.count !== undefined && typeof obj.count === 'function'
     }
 
     if(iter instanceof IterableQuery){

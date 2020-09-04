@@ -6,22 +6,21 @@ export interface IndexedValue<T>{
     readonly index: number;
 }
 
-export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
+export class IndexedIterable<T> implements IterableIterator<IndexedValue<T>>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private index: number = 0;
 
     constructor(iterable: Iterable<T>){
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
     }
 
-    protected clone(): IndexedIterable<T> {
+    [Symbol.iterator](): IndexedIterable<T> {
         return new IndexedIterable(this.source);
     }
 
-    protected getNext(): IteratorResult<IndexedValue<T>, any> {
+    next(): IteratorResult<IndexedValue<T>, any> {
         const next = this.iterator.next();
 
         if(this.index > Number.MAX_SAFE_INTEGER){
@@ -40,20 +39,19 @@ export class IndexedIterable<T> extends IterableIterator<IndexedValue<T>>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class IndexedArrayIterable<T> extends IterableIterator<IndexedValue<T>> implements SizedIterable<IndexedValue<T>>{
+export class IndexedArrayIterable<T> implements IterableIterator<IndexedValue<T>>, SizedIterable<IndexedValue<T>>{
     private readonly source: T[];
     private index: number = 0;
 
     constructor(array: T[]){
-        super();
         this.source = array;
     }
 
-    protected clone(): IndexedArrayIterable<T> {
+    [Symbol.iterator](): IndexedArrayIterable<T> {
         return new IndexedArrayIterable(this.source);
     }
 
-    protected getNext(): IteratorResult<IndexedValue<T>, any> {
+    next(): IteratorResult<IndexedValue<T>, any> {
         if(this.index > Number.MAX_SAFE_INTEGER){
             throw new Error("index value is greater than max safe integer value");
         }

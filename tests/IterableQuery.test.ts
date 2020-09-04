@@ -806,3 +806,51 @@ test("IterableQuery.toString", () => {
     expect([1,2,3,4,5,6,7,8,9,10].asQuery().toString({limit: 5, separator: " - ", prefix: "{", postfix: "}", truncate: "and more"}))
         .toStrictEqual("{1 - 2 - 3 - 4 - 5 - and more}");
 });
+
+test('IterableQuery -> where, select', () => {
+    const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
+        .where(e => e > 0 && e <= 5)
+        .map(e => e * 2);
+
+    expect(array.toArray()).toStrictEqual([2,4,6,8,10]);
+    expect(array.count()).toStrictEqual(5);
+
+    const set = new Set([0,1,2,3,4,5,6,7,8,9,10]).asQuery()
+        .where(e => e > 0 && e <= 5)
+        .map(e => e * 2);
+
+    expect(set.toArray()).toStrictEqual([2,4,6,8,10]);
+    expect(set.count()).toStrictEqual(5);
+})
+
+test('IterableQuery -> where, take, select', () => {
+    const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
+        .where(e => e > 0 && e <= 5)
+        .take(3)
+        .map(e => e * 2);
+
+    expect(array.toArray()).toStrictEqual([2,4,6]);
+    expect(array.count()).toStrictEqual(3);
+
+    const set = new Set([0,1,2,3,4,5,6,7,8,9,10]).asQuery()
+        .where(e => e > 0 && e <= 5)
+        .take(3)
+        .map(e => e * 2);
+
+    expect(set.toArray()).toStrictEqual([2,4,6]);
+    expect(set.count()).toStrictEqual(3);
+})
+
+test('IterableQuery -> take, skip', () => {
+    const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery();
+    expect(array.take(3).toArray()).toStrictEqual([0,1,2]);
+    expect(array.take(3).count()).toStrictEqual(3);
+    expect(array.skip(5).toArray()).toStrictEqual([5,6,7,8,9,10]);
+    expect(array.skip(5).count()).toStrictEqual(6);
+
+    const set = new Set([0,1,2,3,4,5,6,7,8,9,10]).asQuery();
+    expect(set.take(3).toArray()).toStrictEqual([0,1,2]);
+    expect(set.take(3).count()).toStrictEqual(3);
+    expect(set.skip(5).toArray()).toStrictEqual([5,6,7,8,9,10]);
+    expect(set.skip(5).count()).toStrictEqual(6);
+})

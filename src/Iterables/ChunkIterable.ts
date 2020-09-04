@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class ChunkIterable<T> extends IterableIterator<T[]>{
+export class ChunkIterable<T> implements IterableIterator<T[]>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly chunkSize: number;
@@ -11,17 +11,16 @@ export class ChunkIterable<T> extends IterableIterator<T[]>{
             throw new Error("Invalid chunk size, should be greater than 0: " +chunkSize);
         }
 
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.chunkSize = chunkSize;
     }
 
-    protected clone(): ChunkIterable<T> {
+    [Symbol.iterator](): ChunkIterable<T> {
         return new ChunkIterable(this.source, this.chunkSize);
     }
 
-    protected getNext(): IteratorResult<T[], any> {
+    next(): IteratorResult<T[], any> {
         while(true){
             const next = this.iterator.next();
 

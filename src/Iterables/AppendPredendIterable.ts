@@ -1,7 +1,7 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 import { SizedIterable } from "./SizedIterable";
 
-export class AppendPrependIterable<T> extends IterableIterator<T>{
+export class AppendPrependIterable<T> implements IterableIterator<T>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly append: boolean;
@@ -9,18 +9,17 @@ export class AppendPrependIterable<T> extends IterableIterator<T>{
     private hasItem: boolean = true;
 
     constructor(iterable: Iterable<T>, item: T, append: boolean){
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.item = item;
         this.append = append;
     }
 
-    protected clone(): AppendPrependIterable<T> {
+    [Symbol.iterator](): AppendPrependIterable<T> {
         return new AppendPrependIterable(this.source, this.item, this.append);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         if(this.append){
             const next = this.iterator.next();
 
@@ -44,7 +43,7 @@ export class AppendPrependIterable<T> extends IterableIterator<T>{
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class AppendPrependArrayIterable<T> extends IterableIterator<T> implements SizedIterable<T>{
+export class AppendPrependArrayIterable<T> implements IterableIterator<T>, SizedIterable<T>{
     private readonly source: T[];
     private readonly append: boolean;
     private readonly item: T;
@@ -52,18 +51,17 @@ export class AppendPrependArrayIterable<T> extends IterableIterator<T> implement
     private index: number;
 
     constructor(array: T[], item: T, append: boolean){
-        super();
         this.source = array;
         this.item = item;
         this.append = append;
         this.index = 0;
     }
 
-    protected clone(): AppendPrependArrayIterable<T> {
+    [Symbol.iterator](): AppendPrependArrayIterable<T> {
         return new AppendPrependArrayIterable(this.source, this.item, this.append);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         if(!this.hasItem && this.index === this.source.length){
             return iteratorDone();
         }

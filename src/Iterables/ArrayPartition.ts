@@ -1,7 +1,7 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 import { SizedIterable } from "./SizedIterable";
 
-export class ArrayPartition<T> extends IterableIterator<T> implements SizedIterable<T>{
+export class ArrayPartition<T> implements IterableIterator<T>, SizedIterable<T>{
     private readonly source: T[];
     private readonly start: number;
     private readonly end: number;
@@ -18,7 +18,6 @@ export class ArrayPartition<T> extends IterableIterator<T> implements SizedItera
             throw new Error("end cannot be negative or greater than the array: " +end);
         }
 
-        super();
         this.source = array;
         this.start = start;
         this.end = end;
@@ -57,7 +56,7 @@ export class ArrayPartition<T> extends IterableIterator<T> implements SizedItera
         return new ArrayPartition<T>(array, 0, array.length - count);
     }
 
-    protected clone(): IterableIterator<T> {
+    [Symbol.iterator](): IterableIterator<T> {
         if(Object.is(this, ArrayPartition.empty)){
             return this;
         }
@@ -65,7 +64,7 @@ export class ArrayPartition<T> extends IterableIterator<T> implements SizedItera
         return new ArrayPartition(this.source, this.start, this.end);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         if(this.index < this.end){
             const value = this.source[this.index++];
             return iteratorResult(value);

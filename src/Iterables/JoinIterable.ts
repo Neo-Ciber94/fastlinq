@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
+export class JoinIterable<T, R> implements IterableIterator<[T, R]>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly other: Iterable<R>
@@ -10,18 +10,17 @@ export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
     private otherIterator?: Iterator<R>;
 
     constructor(iterable: Iterable<T>, other: Iterable<R>, selector: (x: T, y: R) => boolean){
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.other = other;
         this.selector = selector;
     }
 
-    protected clone(): JoinIterable<T, R> {
+    [Symbol.iterator](): JoinIterable<T, R> {
         return new JoinIterable(this.source, this.other, this.selector);
     }
 
-    protected getNext(): IteratorResult<[T, R], any> {
+    next(): IteratorResult<[T, R], any> {
         if(this.current?.done){
             return iteratorDone();
         }
@@ -40,7 +39,7 @@ export class JoinIterable<T, R> extends IterableIterator<[T, R]>{
             const otherNext = this.otherIterator.next();
             if(otherNext.done){
                 this.otherIterator = undefined;
-                return this.getNext();
+                return this.next();
             }
 
             if(this.selector(this.current!.value, otherNext.value)){

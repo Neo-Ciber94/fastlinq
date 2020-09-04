@@ -1,6 +1,6 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class SkipLastIterable<T> extends IterableIterator<T>{
+export class SkipLastIterable<T> implements IterableIterator<T>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly count: number;
@@ -11,18 +11,17 @@ export class SkipLastIterable<T> extends IterableIterator<T>{
             throw new Error("count cannot be negative");
         }
 
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.count = count;
         this.items = [];
     }
 
-    protected clone(): IterableIterator<T> {
+    [Symbol.iterator](): IterableIterator<T> {
         return new SkipLastIterable(this.source, this.count);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         let next = this.iterator.next();
 
         while(!next.done){

@@ -1,6 +1,6 @@
 import { IterableIterator } from "./IterableIterator";
 
-export class StepByIterator<T> extends IterableIterator<T>{
+export class StepByIterator<T> implements IterableIterator<T>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
     private readonly step: number;
@@ -11,18 +11,17 @@ export class StepByIterator<T> extends IterableIterator<T>{
             throw new Error("step cannot be negative or zero");
         }
 
-        super();
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.step = step;
         this.count = 0;
     }
 
-    protected clone(): IterableIterator<T> {
+    [Symbol.iterator](): IterableIterator<T> {
         return new StepByIterator(this.source, this.step);
     }
 
-    protected getNext(): IteratorResult<T, any> {
+    next(): IteratorResult<T, any> {
         let next = this.iterator.next();
         if(next.done){
             return next;
