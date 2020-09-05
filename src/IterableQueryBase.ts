@@ -32,7 +32,7 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return new IterableQuery(iterable);
     }
 
-    where(predicate: (value: T) => boolean): Queryable<T> {
+    filter(predicate: (value: T) => boolean): Queryable<T> {
         const iterable = new WhereIterable(this, predicate);
         return new IterableQuery(iterable);
     }

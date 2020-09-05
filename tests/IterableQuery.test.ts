@@ -26,11 +26,11 @@ test('IterableQuery.flatMap', () => {
     expect(elements.toArray()).toStrictEqual([1,2,3,4,5,6,7,8,9]);
 });
 
-test('IterableQuery.where', () => {
-    const array = [1,2,3,4,5,6,7,8,9,10].asQuery().where(e => e % 2 === 0);
+test('IterableQuery.filter', () => {
+    const array = [1,2,3,4,5,6,7,8,9,10].asQuery().filter(e => e % 2 === 0);
     expect(array.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
 
-    const set = new Set([1,2,3,4,5,6,7,8,9,10]).asQuery().where(e => e % 2 === 0);
+    const set = new Set([1,2,3,4,5,6,7,8,9,10]).asQuery().filter(e => e % 2 === 0);
     expect(set.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
 });
 
@@ -807,25 +807,25 @@ test("IterableQuery.toString", () => {
         .toStrictEqual("{1 - 2 - 3 - 4 - 5 - and more}");
 });
 
-test('IterableQuery -> where, select', () => {
+test('IterableQuery -> filter, select', () => {
     const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
-        .where(e => e > 0 && e <= 5)
+        .filter(e => e > 0 && e <= 5)
         .map(e => e * 2);
 
     expect(array.toArray()).toStrictEqual([2,4,6,8,10]);
     expect(array.count()).toStrictEqual(5);
 
     const set = new Set([0,1,2,3,4,5,6,7,8,9,10]).asQuery()
-        .where(e => e > 0 && e <= 5)
+        .filter(e => e > 0 && e <= 5)
         .map(e => e * 2);
 
     expect(set.toArray()).toStrictEqual([2,4,6,8,10]);
     expect(set.count()).toStrictEqual(5);
 })
 
-test('IterableQuery -> where, take, select', () => {
+test('IterableQuery -> filter, take, select', () => {
     const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
-        .where(e => e > 0 && e <= 5)
+        .filter(e => e > 0 && e <= 5)
         .take(3)
         .map(e => e * 2);
 
@@ -833,7 +833,7 @@ test('IterableQuery -> where, take, select', () => {
     expect(array.count()).toStrictEqual(3);
 
     const set = new Set([0,1,2,3,4,5,6,7,8,9,10]).asQuery()
-        .where(e => e > 0 && e <= 5)
+        .filter(e => e > 0 && e <= 5)
         .take(3)
         .map(e => e * 2);
 

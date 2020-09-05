@@ -4,40 +4,28 @@ import { measureAverageTimeAndLog } from './src/Iterables/Utils';
 import './src/Query';
 import { Query } from './src/Query';
 
-class RangeEnumerator implements EnumeratorEnumerable<number>{
-  private index: number = 0;
-  next(): IteratorResult<number, any> {
-    if(this.index < 10){
-      return { value: this.index++}
-    }
 
-    return { value: undefined, done: true }
-  }
-
-  [Symbol.iterator](): Iterator<number, any, undefined> {
-    return this;
-  }
-}
-
-const range = new RangeEnumerator();
-for (const e of range) {
-  console.log(e);
-}
-
-const array = [0,1,2,3,4,5,6,7,8,9,10].asQuery()
-  .where(e => e > 0 && e <= 5)
-  .take(3)
-  //.map(e => e * 2)
-
-abstract class Generator {
+abstract class RngGenerator {
   abstract nextID(): number;
   abstract nextString(maxLength: number, validChars?: string): string;
   abstract nextInteger(min: number, max: number): number;
   abstract nextDouble(min: number, max: number): number;
   abstract nextBoolean() : boolean;
+
+  next<T>(generator: (generator: RngGenerator) => T) : T{
+    return generator(this);
+  }
+
+  generate<T>(count: number, generator: (generator: RngGenerator) => T) : T[]{
+    const array = new Array<T>();
+    for(let i = 0; i < count; i++){
+      array.push(this.next(generator));
+    }
+    return array;
+  }
 }
 
-class SimpleGenerator extends Generator {
+class SimpleGenerator extends RngGenerator {
   private static UpperCase: [number, number] = [64, 90];
   private static LowerCase: [number, number] = [97, 122];
   private static Numbers: [number, number] = [48, 57];
@@ -100,18 +88,6 @@ class SimpleGenerator extends Generator {
   }
 }
 
-abstract class ObjectGenerator<T>{
-    abstract next(generator: Generator) : T;
-    generate(count: number, generator: Generator) : T[]{
-        const array = [];
-        for(let i = 0; i < count; i++){
-            array.push(this.next(generator));
-        }
-
-        return array;
-    }
-}
-
 interface Person{
     readonly id: number;
     readonly firstName: string;
@@ -119,18 +95,19 @@ interface Person{
     readonly age: number;
 }
 
-class PersonGenerator extends ObjectGenerator<Person>{
-    private static FirstNames = ["Carlos", "Maria", "Pedro", "Carl", "Homero", "Louis", "Jessica", "Diane", "Donald", "Amelia", "Rose"];
-    private static LastNames = ["Xi", "Acosta", "Sky", "Blue", "Lemon", "Thomson", "Hills", "Calson", "Phill", "Rodriguez", "White"];
+const rngGenerator = new SimpleGenerator();
 
-    next(generator: Generator) : Person{
-        const id = generator.nextID();
-        const firstName = PersonGenerator.FirstNames[generator.nextInteger(0, PersonGenerator.FirstNames.length)];
-        const lastName = PersonGenerator.LastNames[generator.nextInteger(0, PersonGenerator.LastNames.length)];
-        const age = generator.nextInteger(15, 40);
-        return { id, firstName, lastName, age }
-    }
+const firstNamesList = ["Carlos", "Maria", "Pedro", "Carl", "Homero", "Louis", "Jessica", "Diane", "Donald", "Amelia", "Rose"];
+const lastNamesList = ["Xi", "Acosta", "Sky", "Blue", "Lemon", "Thomson", "Hills", "Calson", "Phill", "Rodriguez", "White"];
+
+const persons = rngGenerator.generate<Person>(10, (generator) => {
+  const id = generator.nextID();
+  const firstName = firstNamesList[generator.nextInteger(0, firstNamesList.length)];
+  const lastName = lastNamesList[generator.nextInteger(0, lastNamesList.length)];
+  const age = generator.nextInteger(15, 40);
+  return { id, firstName, lastName, age }
+})
+
+for (const e of persons) {
+  console.log(e)
 }
-
-const gen = new SimpleGenerator();
-const personGen = new PersonGenerator();

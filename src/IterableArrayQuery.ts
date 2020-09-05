@@ -25,7 +25,7 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> implements Sized
         return new IterableQuery(iterable);
     }
 
-    where(predicate: (value: T) => boolean) : Queryable<T>{
+    filter(predicate: (value: T) => boolean) : Queryable<T>{
         const iterable = new WhereArrayIterable(this.array, predicate);
         return new IterableQuery(iterable);
     }

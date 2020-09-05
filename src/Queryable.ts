@@ -8,7 +8,7 @@ import { IndexedValue } from "./Iterables/IndexedIterable"
 export interface Queryable<T> extends Iterable<T>{
     map<R>(transform: (value: T) => R) : Queryable<R>;
     flatMap<R>(transform: (value: T) => R[]) : Queryable<R>;
-    where(predicate: (value: T) => boolean) : Queryable<T>;
+    filter(predicate: (value: T) => boolean) : Queryable<T>;
     skip(n: number) : Queryable<T>;
     take(n: number) : Queryable<T>;
     skipWhile(predicate: (value: T) => boolean) : Queryable<T>;
