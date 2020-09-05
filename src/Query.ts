@@ -5,40 +5,36 @@ import { IterableGenerator } from "./Iterables/IterableGenerator";
 import { KeyValue } from "./Iterables/KeyValue";
 import { RangeIterable } from "./Iterables/RangeIterable";
 
-/**
- * Helper factory class for `Queryable<T>`.
- */
-export abstract class Query{
-    private constructor(){}
-
-    static from<T>(...values: T[]) : Queryable<T>{
+// tslint:disable-next-line: no-namespace
+export namespace Query{
+    export function from<T>(...values: T[]) : Queryable<T>{
         return new IterableArrayQuery(values);
     }
 
-    static fromIterable<T>(iterable: Iterable<T>) : Queryable<T>{
+    export function fromIterable<T>(iterable: Iterable<T>) : Queryable<T>{
         return new IterableQuery(iterable);
     }
 
-    static empty<T>() : Queryable<T>{
+    export function empty<T>() : Queryable<T>{
         return new IterableArrayQuery(new Array<T>(0));
     }
 
-    static range(start: number, end: number, step: number = 1) : Queryable<number>{
+    export function range(start: number, end: number, step: number = 1) : Queryable<number>{
         const iterable = new RangeIterable(start, end, step);
         return new IterableQuery(iterable);
     }
 
-    static rangeInclusive(start: number, end: number, step: number = 1) : Queryable<number>{
+    export function rangeInclusive(start: number, end: number, step: number = 1) : Queryable<number>{
         const iterable = new RangeIterable(start, end, step, true);
         return new IterableQuery(iterable);
     }
 
-    static repeat<T>(value: T, count: number) : Queryable<T>{
+    export function repeat<T>(value: T, count: number) : Queryable<T>{
         const iterable = new IterableGenerator<T>(count, (_) => value);
         return new IterableQuery(iterable);
     }
 
-    static generate<T>(length: number, generator: (index: number, prev?: T) => T, seed?: T) : Queryable<T>{
+    export function generate<T>(length: number, generator: (index: number, prev?: T) => T, seed?: T) : Queryable<T>{
         const iterable = new IterableGenerator<T>(length, generator, seed);
         return new IterableQuery(iterable);
     }

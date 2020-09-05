@@ -4,6 +4,15 @@ import { measureAverageTimeAndLog } from "./src/Utils/measureAverageTimeAndLog";
 import './src/Query';
 import { Query } from './src/Query';
 
+// Sequence<T>
+// Sequences -> Sequences.range(0, 10), Sequences.repeat(10, "Hello")
+// SequenceBase
+// ArraySequence
+// IterableSequence
+
+for (const e of Query.range(0, 10)) {
+  console.log(e);
+}
 
 abstract class RngGenerator {
   abstract nextID(): number;
