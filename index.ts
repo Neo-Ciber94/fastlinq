@@ -1,6 +1,6 @@
 /* tslint:disable: no-console max-classes-per-file */
 
-import { measureAverageTimeAndLog } from './src/Iterables/Utils';
+import { measureAverageTimeAndLog } from "./src/Utils/measureAverageTimeAndLog";
 import './src/Query';
 import { Query } from './src/Query';
 
@@ -108,6 +108,6 @@ const persons = rngGenerator.generate<Person>(10, (generator) => {
   return { id, firstName, lastName, age }
 })
 
-for (const e of persons) {
-  console.log(e)
-}
+// for (const e of persons) {
+//   console.log(e)
+// }

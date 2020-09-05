@@ -16,7 +16,7 @@ import { WindowIterable } from "./Iterables/WindowIterable";
 import { ZipIterable } from "./Iterables/ZipIterable";
 import { JoinIterable } from "./Iterables/JoinIterable";
 import { IterableQuery } from "./IterableQuery";
-import { isIterable } from "./Iterables/Utils";
+import { isIterable } from "./Utils/isIterable";
 import { SizedIterable } from "./Iterables/SizedIterable";
 
 export abstract class IterableQueryBase<T> implements Queryable<T> {
