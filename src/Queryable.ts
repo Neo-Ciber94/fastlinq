@@ -46,8 +46,7 @@ export interface Queryable<T> extends Iterable<T>{
     seek(action: (value: T) => void) : this;
     forEach(action: (value: T) => void) : void;
     reduce(reducer: (prev: T, current: T) => T) : T | undefined;
-    reduce(reducer: (prev: T, current: T) => T, seed: T) : T;
-    fold<TResult>(seed: TResult, combine: (prev: TResult, current: T) => TResult) : TResult;
+    fold<TResult>(initialValue: TResult, combine: (prev: TResult, current: T) => TResult) : TResult;
     sum(selector: (value: T) => number) : number | undefined;
     product(selector: (value: T) => number) : number | undefined;
     average(selector: (value: T) => number) : number | undefined;

@@ -321,38 +321,31 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
     }
 
-    reduce(reducer: (prev: T, current: T) => T): T | undefined;
-    reduce(reducer: (prev: T, current: T) => T, seed: T): T;
-    reduce(reducer: any, seed?: any) {
+    reduce(reducer: (prev: T, current: T) => T): T | undefined{
         const iterator = this[Symbol.iterator]();
-        let result: T = seed;
+        let result: T | undefined = iterator.next()?.value;
 
-        if (!result) {
-            const next = iterator.next();
-            if (!next.done) {
-                result = next.value;
+        if(result){
+            while (true) {
+                const next = iterator.next();
+                if (!next.done) {
+                    result = reducer(result, next.value);
+                }
+                else {
+                    break;
+                }
             }
         }
 
-        while (true) {
-            const next = iterator.next();
-            if (!next.done) {
-                result = reducer(result, next.value);
-            }
-            else {
-                break;
-            }
-        }
-
-        return result!;
+        return result;
     }
 
-    fold<TResult>(seed: TResult, combine: (prev: TResult, current: T) => TResult): TResult {
+    fold<TResult>(initialValue: TResult, combine: (prev: TResult, current: T) => TResult): TResult {
         if (this.isEmpty()) {
-            return seed;
+            return initialValue;
         }
 
-        let result = seed;
+        let result = initialValue;
         for (const e of this) {
             result = combine(result, e);
         }

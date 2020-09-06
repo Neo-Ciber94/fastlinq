@@ -468,13 +468,6 @@ test("IterableQuery.reduce", () => {
     expect(new Array<number>().asQuery().reduce((prev, cur) => prev + cur)).toBeUndefined();
 });
 
-test("IterableQuery.reduce with seed", () => {
-    const elements = [1,2,3,4].asQuery();
-
-    expect(elements.reduce((prev, cur) => prev + cur, 10)).toStrictEqual(20);
-    expect(new Array<number>().asQuery().reduce((prev, cur) => prev + cur, 10)).toStrictEqual(10);
-});
-
 test("IterableQuery.fold", () => {
     const elements = [1,2,3,4].asQuery();
 

@@ -273,7 +273,7 @@ interface Queryable<T> extends Iterable<T>{
     count(predicate: (value: T) => boolean) : number;
 
     /// Groups the elements of this query by the given key.
-    groupBy<TKey>(keySelector: (value: T) => K) : Map<TKey, T[]>;
+    groupBy<TKey>(keySelector: (value: T) => TKey) : Map<TKey, T[]>;
 
     /// Gets an array with the elements of this query.
     toArray() : T[];
