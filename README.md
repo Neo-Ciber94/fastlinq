@@ -231,13 +231,15 @@ interface Queryable<T> extends Iterable<T>{
     /// Gets the only value of the query, fail if there is more than 1 element.
     single() : T | undefined;
 
-    /// Gets the only value of the query that meet the condition, fail if more than one meet the condition.
+    /// Gets the only value of the query that meet the condition, 
+    /// fail if more than one meet the condition.
     single(predicate: (value: T) => boolean) : T | undefined;
 
     /// Gets the only value of the query, or the default if there is more than 1 element.
     singleOrElse(defaultValue: T) : T;
 
-    /// Gets the only value of the query that meet the condition, or the default if there is more than 1 element.
+    /// Gets the only value of the query that meet the condition, 
+    /// or the default if there is more than 1 element.
     singleOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
 
     /// Check if all the elements in the query meet the condition.
