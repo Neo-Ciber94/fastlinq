@@ -33,7 +33,6 @@ export class FilterIterable<T> implements IterableIterator<T> {
     }
 }
 
-// tslint:disable-next-line: max-classes-per-file
 export class FilterArrayIterable<T> implements IterableIterator<T>{
     private readonly source: T[];
     private readonly predicate: (value: T) => boolean;

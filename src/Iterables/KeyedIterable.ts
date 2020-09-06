@@ -1,6 +1,5 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 import { KeyValue } from "./KeyValue";
-import { SizedIterable } from "./SizedIterable";
 
 export class KeyedIterable<TKey, T> implements IterableIterator<KeyValue<TKey, T>>{
     private readonly source: Iterable<T>;

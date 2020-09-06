@@ -1,22 +1,22 @@
 import { IterableIterator, iteratorDone, iteratorResult } from './IterableIterator';
 import { SizedIterable } from './SizedIterable';
 
-export class MapIterable<T, R> implements IterableIterator<R>{
+export class MapIterable<T, TResult> implements IterableIterator<TResult>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
-    private readonly transform: (value: T) => R;
+    private readonly transform: (value: T) => TResult;
 
-    constructor(iterable: Iterable<T>, transform: (value: T) => R) {
+    constructor(iterable: Iterable<T>, transform: (value: T) => TResult) {
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.transform = transform;
     }
 
-    [Symbol.iterator](): MapIterable<T, R> {
+    [Symbol.iterator](): MapIterable<T, TResult> {
         return new MapIterable(this.source, this.transform);
     }
 
-    next(): IteratorResult<R, any> {
+    next(): IteratorResult<TResult, any> {
         const next = this.iterator.next();
         if(next.done){
             return {
@@ -31,23 +31,22 @@ export class MapIterable<T, R> implements IterableIterator<R>{
     }
 }
 
-// tslint:disable-next-line: max-classes-per-file
-export class MapArrayIterable<T, R> implements IterableIterator<R>, SizedIterable<R>{
+export class MapArrayIterable<T, TResult> implements IterableIterator<TResult>, SizedIterable<TResult>{
     private readonly source: T[];
-    private readonly transform: (value: T) => R;
+    private readonly transform: (value: T) => TResult;
     private index: number;
 
-    constructor(array: T[], transform: (value: T) => R){
+    constructor(array: T[], transform: (value: T) => TResult){
         this.source = array;
         this.transform = transform;
         this.index = 0;
     }
 
-    [Symbol.iterator](): MapArrayIterable<T, R> {
+    [Symbol.iterator](): MapArrayIterable<T, TResult> {
         return new MapArrayIterable(this.source, this.transform);
     }
 
-    next(): IteratorResult<R, any> {
+    next(): IteratorResult<TResult, any> {
         if(this.index < this.source.length){
             const value = this.source[this.index++];
             return iteratorResult(this.transform(value));

@@ -20,7 +20,7 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> implements Sized
         return this.array[Symbol.iterator]();
     }
 
-    map<R>(transform: (value: T) => R) : Queryable<R>{
+    map<TResult>(transform: (value: T) => TResult) : Queryable<TResult>{
         const iterable = new MapArrayIterable(this.array, transform);
         return new IterableQuery(iterable);
     }

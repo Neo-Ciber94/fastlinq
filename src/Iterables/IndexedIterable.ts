@@ -38,7 +38,6 @@ export class IndexedIterable<T> implements IterableIterator<IndexedValue<T>>{
     }
 }
 
-// tslint:disable-next-line: max-classes-per-file
 export class IndexedArrayIterable<T> implements IterableIterator<IndexedValue<T>>, SizedIterable<IndexedValue<T>>{
     private readonly source: T[];
     private index: number = 0;

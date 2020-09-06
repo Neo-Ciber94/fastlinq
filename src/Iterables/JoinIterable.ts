@@ -1,26 +1,26 @@
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
-export class JoinIterable<T, R> implements IterableIterator<[T, R]>{
+export class JoinIterable<T, TKey> implements IterableIterator<[T, TKey]>{
     private readonly source: Iterable<T>;
     private readonly iterator: Iterator<T>;
-    private readonly other: Iterable<R>
-    private readonly selector: (x: T, y: R) => boolean;
+    private readonly other: Iterable<TKey>
+    private readonly selector: (x: T, y: TKey) => boolean;
 
     private current?: IteratorResult<T>;
-    private otherIterator?: Iterator<R>;
+    private otherIterator?: Iterator<TKey>;
 
-    constructor(iterable: Iterable<T>, other: Iterable<R>, selector: (x: T, y: R) => boolean){
+    constructor(iterable: Iterable<T>, other: Iterable<TKey>, selector: (x: T, y: TKey) => boolean){
         this.source = iterable;
         this.iterator = iterable[Symbol.iterator]();
         this.other = other;
         this.selector = selector;
     }
 
-    [Symbol.iterator](): JoinIterable<T, R> {
+    [Symbol.iterator](): JoinIterable<T, TKey> {
         return new JoinIterable(this.source, this.other, this.selector);
     }
 
-    next(): IteratorResult<[T, R], any> {
+    next(): IteratorResult<[T, TKey], any> {
         if(this.current?.done){
             return iteratorDone();
         }

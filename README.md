@@ -34,10 +34,10 @@ Here an overview of the fastquery ```API```.
 ```ts
 interface Queryable<T> extends Iterable<T>{
     /// Transform the values of the query.
-    map<R>(transform: (value: T) => R) : Queryable<R>;
+    map<TResult>(transform: (value: T) => TResult) : Queryable<TResult>;
 
     /// Gets a query with all the values returned in the callback.
-    flatMap<R>(transform: (value: T) => R[]) : Queryable<R>;
+    flatMap<TResult>(transform: (value: T) => TResult[]) : Queryable<TResult>;
 
     /// Gets all the values that match the specified condition.
     filter(predicate: (value: T) => boolean) : Queryable<T>;
@@ -82,7 +82,7 @@ interface Queryable<T> extends Iterable<T>{
     distinct() : Queryable<T>;
 
     /// Gets all values that have a different values than the provided by the `keySelector`.
-    distinctBy<R>(keySelector: (value: T) => R) : Queryable<T>;
+    distinctBy<TResult>(keySelector: (value: T) => TResult) : Queryable<T>;
 
     /// Gets the elements of this query plus provided when that don't exists within.
     /// Check: https://en.wikipedia.org/wiki/Union_(set_theory)
@@ -118,20 +118,20 @@ interface Queryable<T> extends Iterable<T>{
 
     /// Sorts the elements of this query using the provided value
     /// and an optional `compare`
-    sortBy<K>(keySelector: (value: T) => K) : Queryable<T>;
-    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>) : Queryable<T>;
+    sortBy<TKey>(keySelector: (value: T) => TKey) : Queryable<T>;
+    sortBy<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>) : Queryable<T>;
 
     /// Sorts by decending the elements of this query using the provided value
     /// and an optional `compare`
-    sortByDecending<K>(keySelector: (value: T) => K) : Queryable<T>;
-    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>) : Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey) : Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>) : Queryable<T>;
 
     /// Gets a pair of all the elements of this query and the specified one
     /// that match the specified predicate.
-    joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean) : Queryable<[T,R]>;
+    joinBy<TOther>(elements: Iterable<TOther>, selector: (current: T, other: TOther) => boolean) : Queryable<[T,TOther]>;
 
     /// Merge the each elements of this query with the provided.
-    zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult) : Queryable<TResult>;
+    zip<TOther, TResult>(elements: Iterable<TOther>, combine: (current: T, other: TOther) => TResult) : Queryable<TResult>;
 
     /// Gets this query or the `defaultValue` if is empty.
     defaultIfEmpty(defaultValue: Iterable<T>) : Queryable<T>;
@@ -153,7 +153,7 @@ interface Queryable<T> extends Iterable<T>{
     reduce(reducer: (prev: T, current: T) => T, seed: T) : T;
 
     /// Provides an initial value and combine the values of this query and get the result.
-    fold<R>(seed: R, combine: (prev: R, current: T) => R) : R;
+    fold<TResult>(initialValue: TResult, combine: (prev: TResult, current: T) => TResult) : TResult;
 
     /// Sums the values provided by the specified selector and get the result.
     sum(selector: (value: T) => number) : number | undefined;
@@ -258,10 +258,10 @@ interface Queryable<T> extends Iterable<T>{
     isSortedDecending() : boolean;
 
     /// Test if this query is sorted by the specified key.
-    isSortedBy<R>(keySelector: (value: T) => R) : boolean;
+    isSortedBy<TKey>(keySelector: (value: T) => TKey) : boolean;
 
     /// Test if this query is sorted by decending by the specified key.
-    isSortedByDecending<R>(keySelector: (value: T) => R) : boolean;
+    isSortedByDecending<TKey>(keySelector: (value: T) => TKey) : boolean;
 
     /// Check if this query have no elements.
     isEmpty() : boolean;
@@ -273,7 +273,7 @@ interface Queryable<T> extends Iterable<T>{
     count(predicate: (value: T) => boolean) : number;
 
     /// Groups the elements of this query by the given key.
-    groupBy<K>(keySelector: (value: T) => K) : Map<K, T[]>;
+    groupBy<TKey>(keySelector: (value: T) => K) : Map<TKey, T[]>;
 
     /// Gets an array with the elements of this query.
     toArray() : T[];
@@ -282,7 +282,7 @@ interface Queryable<T> extends Iterable<T>{
     toSet() : Set<T>;
 
     /// Gets a map with the elements of this query using the key provided by the given selector.
-    toMap<K>(keySelector: (value: T) => K) : Map<K, T>;
+    toMap<TKey>(keySelector: (value: T) => TKey) : Map<TKey, T>;
 
     /// Gets an string representation of the elements of this query.
     toString() : string;

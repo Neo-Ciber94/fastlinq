@@ -18,16 +18,21 @@ import { JoinIterable } from "./Iterables/JoinIterable";
 import { IterableQuery } from "./IterableQuery";
 import { isIterable } from "./Utils/isIterable";
 import { SizedIterable } from "./Iterables/SizedIterable";
+import { Query } from "./Query";import { SkipLastIterable } from "./Iterables/SkipLastIterable";
+import { StepByIterator } from "./Iterables/StepByIterable";
+import { RepeatIterable } from "./Iterables/RepeatIterable";
+import { KeyValue } from "./Iterables/KeyValue";
+import { KeyedIterable } from "./Iterables/KeyedIterable";
 
 export abstract class IterableQueryBase<T> implements Queryable<T> {
     abstract [Symbol.iterator](): Iterator<T, any, undefined>;
 
-    map<R>(transform: (value: T) => R): Queryable<R> {
+    map<TResult>(transform: (value: T) => TResult): Queryable<TResult> {
         const iterable = new MapIterable(this, transform);
         return new IterableQuery(iterable);
     }
 
-    flatMap<R>(transform: (value: T) => R[]): Queryable<R> {
+    flatMap<TResult>(transform: (value: T) => TResult[]): Queryable<TResult> {
         const iterable = new FlatMapIterable(this, transform);
         return new IterableQuery(iterable);
     }
@@ -226,8 +231,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
     }
 
-    sortBy<K>(keySelector: (value: T) => K): Queryable<T>;
-    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>): Queryable<T>;
+    sortBy<TKey>(keySelector: (value: T) => TKey): Queryable<T>;
+    sortBy<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>): Queryable<T>;
     sortBy(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -250,8 +255,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return new IterableArrayQuery(sorted);
     }
 
-    sortByDecending<K>(keySelector: (value: T) => K): Queryable<T>;
-    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>): Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey): Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>): Queryable<T>;
     sortByDecending(keySelector: any, compare?: any) {
         const array = this.toArray();
         let sorted: T[];
@@ -274,12 +279,12 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return new IterableArrayQuery(sorted);
     }
 
-    joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean): Queryable<[T, R]> {
+    joinBy<TKey>(elements: Iterable<TKey>, selector: (current: T, other: TKey) => boolean): Queryable<[T, TKey]> {
         const iterable = new JoinIterable(this, elements, selector);
         return new IterableQuery(iterable);
     }
 
-    zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult): Queryable<TResult> {
+    zip<TOther, TResult>(elements: Iterable<TOther>, combine: (current: T, other: TOther) => TResult): Queryable<TResult> {
         const iterable = new ZipIterable(this, elements, combine);
         return new IterableQuery(iterable);
     }
@@ -342,7 +347,7 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return result!;
     }
 
-    fold<R>(seed: R, combine: (prev: R, current: T) => R): R {
+    fold<TResult>(seed: TResult, combine: (prev: TResult, current: T) => TResult): TResult {
         if (this.isEmpty()) {
             return seed;
         }
@@ -784,8 +789,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return true;
     }
 
-    isSortedBy<R>(keySelector: (value: T) => R): boolean {
-        let prev: R | undefined;
+    isSortedBy<TKey>(keySelector: (value: T) => TKey): boolean {
+        let prev: TKey | undefined;
 
         for (const e of this) {
             const current = keySelector(e);
@@ -801,8 +806,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return true;
     }
 
-    isSortedByDecending<R>(keySelector: (value: T) => R): boolean {
-        let prev: R | undefined;
+    isSortedByDecending<TKey>(keySelector: (value: T) => TKey): boolean {
+        let prev: TKey | undefined;
 
         for (const e of this) {
             const current = keySelector(e);
@@ -865,8 +870,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         }
     }
 
-    groupBy<K>(keySelector: (value: T) => K): Map<K, T[]> {
-        const map = new Map<K, T[]>();
+    groupBy<TKey>(keySelector: (value: T) => TKey): Map<TKey, T[]> {
+        const map = new Map<TKey, T[]>();
         for (const e of this) {
             const key = keySelector(e);
             let values = map.get(key);
@@ -888,8 +893,8 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
         return new Set(this);
     }
 
-    toMap<K>(keySelector: (value: T) => K): Map<K, T> {
-        const map = new Map<K, T>();
+    toMap<TKey>(keySelector: (value: T) => TKey): Map<TKey, T> {
+        const map = new Map<TKey, T>();
         for (const e of this) {
             const key = keySelector(e);
             map.set(key, e);
@@ -969,9 +974,3 @@ function getSizedIterableCount(iter: any) : number | undefined{
 
 // Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'
 import { IterableArrayQuery } from "./IterableArrayQuery";
-import { Query } from "./Query";import { SkipLastIterable } from "./Iterables/SkipLastIterable";
-import { StepByIterator } from "./Iterables/StepByIterable";
-import { RepeatIterable } from "./Iterables/RepeatIterable";
-import { KeyValue } from "./Iterables/KeyValue";
-import { KeyedIterable } from "./Iterables/KeyedIterable";
-

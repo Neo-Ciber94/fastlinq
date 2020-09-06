@@ -42,7 +42,6 @@ export class AppendPrependIterable<T> implements IterableIterator<T>{
     }
 }
 
-// tslint:disable-next-line: max-classes-per-file
 export class AppendPrependArrayIterable<T> implements IterableIterator<T>, SizedIterable<T>{
     private readonly source: T[];
     private readonly append: boolean;

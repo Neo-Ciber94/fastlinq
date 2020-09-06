@@ -7,8 +7,8 @@ import { KeyValue } from "./Iterables/KeyValue";
  * Provide a set of methods for query over the elements of an Iterable.
  */
 export interface Queryable<T> extends Iterable<T>{
-    map<R>(transform: (value: T) => R) : Queryable<R>;
-    flatMap<R>(transform: (value: T) => R[]) : Queryable<R>;
+    map<TResult>(transform: (value: T) => TResult) : Queryable<TResult>;
+    flatMap<TResult>(transform: (value: T) => TResult[]) : Queryable<TResult>;
     filter(predicate: (value: T) => boolean) : Queryable<T>;
     filterNot(predicate: (value: T) => boolean) : Queryable<T>;
     skip(n: number) : Queryable<T>;
@@ -23,7 +23,7 @@ export interface Queryable<T> extends Iterable<T>{
     indexed() : Queryable<IndexedValue<T>>;
     keyed<TKey>(keySelector: (value: T) => TKey) : Queryable<KeyValue<TKey, T>>;
     distinct() : Queryable<T>;
-    distinctBy<R>(keySelector: (value: T) => R) : Queryable<T>;
+    distinctBy<TKey>(keySelector: (value: T) => TKey) : Queryable<T>;
     union(elements: Iterable<T>) : Queryable<T>;
     except(elements: Iterable<T>) : Queryable<T>;
     intersect(elements: Iterable<T>) : Queryable<T>;
@@ -34,12 +34,12 @@ export interface Queryable<T> extends Iterable<T>{
     sort(compare: Compare<T>) : Queryable<T>;
     sortDecending() : Queryable<T>;
     sortDecending(compare: Compare<T>) : Queryable<T>;
-    sortBy<K>(keySelector: (value: T) => K) : Queryable<T>;
-    sortBy<K>(keySelector: (value: T) => K, compare: Compare<K>) : Queryable<T>;
-    sortByDecending<K>(keySelector: (value: T) => K) : Queryable<T>;
-    sortByDecending<K>(keySelector: (value: T) => K, compare: Compare<K>) : Queryable<T>;
-    joinBy<R>(elements: Iterable<R>, selector: (current: T, other: R) => boolean) : Queryable<[T,R]>;
-    zip<R, TResult>(elements: Iterable<R>, combine: (current: T, other: R) => TResult) : Queryable<TResult>;
+    sortBy<TKey>(keySelector: (value: T) => TKey) : Queryable<T>;
+    sortBy<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>) : Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey) : Queryable<T>;
+    sortByDecending<TKey>(keySelector: (value: T) => TKey, compare: Compare<TKey>) : Queryable<T>;
+    joinBy<TKey>(elements: Iterable<TKey>, selector: (current: T, other: TKey) => boolean) : Queryable<[T,TKey]>;
+    zip<TOther, TResult>(elements: Iterable<TOther>, combine: (current: T, other: TOther) => TResult) : Queryable<TResult>;
     defaultIfEmpty(defaultValue: Iterable<T>) : Queryable<T>;
     stepBy(n: number) : Queryable<T>;
     repeat(n: number) : Queryable<T>;
@@ -47,7 +47,7 @@ export interface Queryable<T> extends Iterable<T>{
     forEach(action: (value: T) => void) : void;
     reduce(reducer: (prev: T, current: T) => T) : T | undefined;
     reduce(reducer: (prev: T, current: T) => T, seed: T) : T;
-    fold<R>(seed: R, combine: (prev: R, current: T) => R) : R;
+    fold<TResult>(seed: TResult, combine: (prev: TResult, current: T) => TResult) : TResult;
     sum(selector: (value: T) => number) : number | undefined;
     product(selector: (value: T) => number) : number | undefined;
     average(selector: (value: T) => number) : number | undefined;
@@ -91,10 +91,10 @@ export interface Queryable<T> extends Iterable<T>{
     isEmpty() : boolean;
     count() : number;
     count(predicate: (value: T) => boolean) : number;
-    groupBy<K>(keySelector: (value: T) => K) : Map<K, T[]>;
+    groupBy<TKey>(keySelector: (value: T) => TKey) : Map<TKey, T[]>;
     toArray() : T[];
     toSet() : Set<T>;
-    toMap<K>(keySelector: (value: T) => K) : Map<K, T>;
+    toMap<TKey>(keySelector: (value: T) => TKey) : Map<TKey, T>;
     toString() : string;
     toString(separator: string) : string;
     toString(options: ToStringOptions) : string;
