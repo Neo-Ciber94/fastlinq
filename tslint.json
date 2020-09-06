@@ -3,9 +3,9 @@
     "extends": [
         "tslint:recommended"
     ],
-    "jsRules": {},
     "rules": {
-        "max-classes-per-file": false
-    },
-    "rulesDirectory": []
+        "max-classes-per-file": false,
+        "no-namespace": false,
+        "unified-signatures": false
+    }
 }

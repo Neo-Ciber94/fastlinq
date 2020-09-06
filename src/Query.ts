@@ -58,9 +58,9 @@ declare global{
     }
 }
 
-Map.prototype.asQuery = function<K,V>() : Queryable<KeyValue<K,V>>{
+Map.prototype.asQuery = function<TKey, TValue>() : Queryable<KeyValue<TKey, TValue>>{
     return new IterableQuery(this.entries())
-        .map((e): KeyValue<K, V> => ({ key: e[0], value: e[1] }));
+        .map((e): KeyValue<TKey, TValue> => ({ key: e[0], value: e[1] }));
 }
 
 Array.prototype.asQuery = function<T>() : Queryable<T>{
