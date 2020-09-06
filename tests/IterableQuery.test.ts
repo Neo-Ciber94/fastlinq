@@ -34,6 +34,14 @@ test('IterableQuery.filter', () => {
     expect(set.toArray()).toStrictEqual([2, 4, 6, 8, 10]);
 });
 
+test('IterableQuery.filterNot', () => {
+    const array = [1,2,3,4,5,6,7,8,9,10].asQuery().filterNot(e => e % 2 === 0);
+    expect(array.toArray()).toStrictEqual([1,3,5,7,9]);
+
+    const set = new Set([1,2,3,4,5,6,7,8,9,10]).asQuery().filterNot(e => e % 2 === 0);
+    expect(set.toArray()).toStrictEqual([1,3,5,7,9]);
+});
+
 test('IterableQuery.take', () => {
     const array = [1,2,3,4,5].asQuery();
     expect(array.take(3).toArray()).toStrictEqual([1,2,3]);
@@ -152,6 +160,28 @@ test('IterableQuery.indexed', () => {
     expect(set[1].value).toStrictEqual("Orange");
 
     expect(set[2].index).toStrictEqual(2);
+    expect(set[2].value).toStrictEqual("Pear");
+});
+
+test('IterableQuery.keyed', () => {
+    const array = ["Apple", "Orange", "Pear"].asQuery().keyed(e => e.charAt(0).toLocaleLowerCase()).toArray();
+    expect(array[0].key).toStrictEqual("a");
+    expect(array[0].value).toStrictEqual("Apple");
+
+    expect(array[1].key).toStrictEqual("o");
+    expect(array[1].value).toStrictEqual("Orange");
+
+    expect(array[2].key).toStrictEqual("p");
+    expect(array[2].value).toStrictEqual("Pear");
+
+    const set = new Set(["Apple", "Orange", "Pear"]).asQuery().keyed(e => e.charAt(0).toLocaleLowerCase()).toArray();
+    expect(set[0].key).toStrictEqual("a");
+    expect(set[0].value).toStrictEqual("Apple");
+
+    expect(set[1].key).toStrictEqual("o");
+    expect(set[1].value).toStrictEqual("Orange");
+
+    expect(set[2].key).toStrictEqual("p");
     expect(set[2].value).toStrictEqual("Pear");
 });
 

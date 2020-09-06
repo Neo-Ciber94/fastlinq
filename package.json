@@ -1,7 +1,7 @@
 {
-  "name": "collections",
+  "name": "fastlinq",
   "version": "1.0.0",
-  "description": "Collections for Typescript",
+  "description": "Query library for Typescript",
   "main": "index.ts",
   "scripts": {
     "test": "jest tests/ -- --r esm",

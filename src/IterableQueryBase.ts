@@ -3,7 +3,7 @@ import { Queryable, ToStringOptions } from "./Queryable";
 import { Compare, Ordering, compare as compareNatural, compareReverse } from "./Compare";
 import { MapIterable } from "./Iterables/MapIterable";
 import { FlatMapIterable } from "./Iterables/FlatMapIterable";
-import { WhereIterable } from "./Iterables/WhereIterable";
+import { FilterIterable } from "./Iterables/FilterIterable";
 import { SkipIterable } from "./Iterables/SkipIterable";
 import { TakeIterable } from "./Iterables/TakeIterable";
 import { SkipWhileIterable } from "./Iterables/SkipWhileIterable";
@@ -33,8 +33,13 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
     }
 
     filter(predicate: (value: T) => boolean): Queryable<T> {
-        const iterable = new WhereIterable(this, predicate);
+        const iterable = new FilterIterable(this, predicate);
         return new IterableQuery(iterable);
+    }
+
+    filterNot(predicate: (value: T) => boolean): Queryable<T> {
+        const negated = (value: T) => !predicate(value);
+        return this.filter(negated);
     }
 
     skip(n: number): Queryable<T> {
@@ -102,6 +107,11 @@ export abstract class IterableQueryBase<T> implements Queryable<T> {
 
     indexed(): Queryable<IndexedValue<T>> {
         const iterable = new IndexedIterable(this);
+        return new IterableQuery(iterable);
+    }
+
+    keyed<TKey>(keySelector: (value: T) => TKey): Queryable<KeyValue<TKey, T>> {
+        const iterable = new KeyedIterable(this, keySelector);
         return new IterableQuery(iterable);
     }
 
@@ -972,4 +982,6 @@ import { IterableArrayQuery } from "./IterableArrayQuery";
 import { Query } from "./Query";import { SkipLastIterable } from "./Iterables/SkipLastIterable";
 import { StepByIterator } from "./Iterables/StepByIterable";
 import { RepeatIterable } from "./Iterables/RepeatIterable";
+import { KeyValue } from "./Iterables/KeyValue";
+import { KeyedIterable } from "./Iterables/KeyedIterable";
 

@@ -4,7 +4,7 @@ import { IterableQueryBase } from "./IterableQueryBase";
 import { AppendPrependArrayIterable } from "./Iterables/AppendPredendIterable";
 import { IndexedArrayIterable, IndexedValue } from "./Iterables/IndexedIterable";
 import { MapArrayIterable } from "./Iterables/MapIterable";
-import { WhereArrayIterable } from "./Iterables/WhereIterable";
+import { FilterArrayIterable } from "./Iterables/FilterIterable";
 import { SizedIterable } from "./Iterables/SizedIterable";
 import { ArrayPartition } from "./Iterables/ArrayPartition";
 
@@ -26,7 +26,7 @@ export class IterableArrayQuery<T> extends IterableQueryBase<T> implements Sized
     }
 
     filter(predicate: (value: T) => boolean) : Queryable<T>{
-        const iterable = new WhereArrayIterable(this.array, predicate);
+        const iterable = new FilterArrayIterable(this.array, predicate);
         return new IterableQuery(iterable);
     }
 

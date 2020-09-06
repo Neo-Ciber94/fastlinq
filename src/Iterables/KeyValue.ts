@@ -2,13 +2,13 @@
 /**
  * Represents `key` and `value` pair.
  */
-export interface KeyValue<K, V>{
+export interface KeyValue<TKey, TValue>{
     /**
      * The key.
      */
-    readonly key: K;
+    readonly key: TKey;
     /**
      * The value.
      */
-    readonly value: V;
+    readonly value: TValue;
 }

@@ -1,6 +1,7 @@
 /* tslint:disable:unified-signatures */
 import { Compare } from "./Compare";
 import { IndexedValue } from "./Iterables/IndexedIterable"
+import { KeyValue } from "./Iterables/KeyValue";
 
 /**
  * Provide a set of methods for query over the elements of an Iterable.
@@ -9,6 +10,7 @@ export interface Queryable<T> extends Iterable<T>{
     map<R>(transform: (value: T) => R) : Queryable<R>;
     flatMap<R>(transform: (value: T) => R[]) : Queryable<R>;
     filter(predicate: (value: T) => boolean) : Queryable<T>;
+    filterNot(predicate: (value: T) => boolean) : Queryable<T>;
     skip(n: number) : Queryable<T>;
     take(n: number) : Queryable<T>;
     skipWhile(predicate: (value: T) => boolean) : Queryable<T>;
@@ -19,6 +21,7 @@ export interface Queryable<T> extends Iterable<T>{
     prepend(value: T) : Queryable<T>;
     concat(elements: Iterable<T>) : Queryable<T>;
     indexed() : Queryable<IndexedValue<T>>;
+    keyed<TKey>(keySelector: (value: T) => TKey) : Queryable<KeyValue<TKey, T>>;
     distinct() : Queryable<T>;
     distinctBy<R>(keySelector: (value: T) => R) : Queryable<T>;
     union(elements: Iterable<T>) : Queryable<T>;
