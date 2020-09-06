@@ -639,34 +639,18 @@ test("IterableQuery.lastIndexOf", () => {
 test("IterableQuery.first", () => {
     expect([1,2,3,4,5].asQuery().first()).toStrictEqual(1);
     expect(new Array<number>().asQuery().first()).toBeUndefined();
-    expect([1,5,2,4,3].asQuery().first(e => e > 2)).toStrictEqual(5);
 
     expect(new Set([1,2,3,4,5]).asQuery().first()).toStrictEqual(1);
     expect(new Set<number>().asQuery().first()).toBeUndefined();
-    expect(new Set([1,5,2,4,3]).asQuery().first(e => e > 2)).toStrictEqual(5);
 });
 
 test("IterableQuery.last", () => {
     expect([1,2,3,4,5].asQuery().last()).toStrictEqual(5);
     expect(new Array<number>().asQuery().last()).toBeUndefined();
-    expect([1,4,5,3,1].asQuery().last(e => e > 2)).toStrictEqual(3);
 
     expect(new Set([1,2,3,4,5]).asQuery().last()).toStrictEqual(5);
     expect(new Set<number>().asQuery().last()).toBeUndefined();
-    expect(new Set([1,4,5,3,1]).asQuery().last(e => e > 2)).toStrictEqual(3);
 });
-
-test("IterableQuery.firstOrElse", () => {
-    expect([1,2,3,4,5].asQuery().firstOrElse(-1)).toStrictEqual(1);
-    expect(new Array<number>().asQuery().firstOrElse(-1)).toStrictEqual(-1);
-    expect([3,4,2,1,5].asQuery().firstOrElse(-1, e => e > 3)).toStrictEqual(4);
-})
-
-test("IterableQuery.lastOrElse", () => {
-    expect([1,2,3,4,5].asQuery().lastOrElse(-1)).toStrictEqual(5);
-    expect(new Array<number>().asQuery().lastOrElse(-1)).toStrictEqual(-1);
-    expect([3,4,2,1,5].asQuery().lastOrElse(-1, e => e > 3)).toStrictEqual(5);
-})
 
 test("IterableQuery.find", () => {
     const elements = [1,2,3,4,5].asQuery();
@@ -688,6 +672,16 @@ test("IterableQuery.find with predicate", () => {
     expect(elements.find(e => e === 3)).toStrictEqual(3);
     expect(new Array<number>().asQuery().find(e => e === 3)).toBeUndefined();
 });
+
+test("IterableQuery.findOrElse", () => {
+    expect([3,4,2,1,5].asQuery().findOrElse(-1, e => e > 3)).toStrictEqual(4);
+    expect([3,4,2,1,5].asQuery().findOrElse(-1, e => e > 5)).toStrictEqual(-1);
+})
+
+test("IterableQuery.findLastOrElse", () => {
+    expect([3,4,2,1,5].asQuery().findLastOrElse(-1, e => e > 3)).toStrictEqual(4);
+    expect([3,4,2,1,5].asQuery().findLastOrElse(-1, e => e > 5)).toStrictEqual(-1);
+})
 
 test("IterableQuery.findIndex", () => {
     const elements = [1,2,3,4,5].asQuery();

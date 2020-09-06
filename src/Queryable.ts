@@ -43,7 +43,7 @@ export interface Queryable<T> extends Iterable<T>{
     defaultIfEmpty(defaultValue: Iterable<T>) : Queryable<T>;
     stepBy(n: number) : Queryable<T>;
     repeat(n: number) : Queryable<T>;
-    seek(action: (value: T) => void) : Queryable<T>;
+    seek(action: (value: T) => void) : this;
     forEach(action: (value: T) => void) : void;
     reduce(reducer: (prev: T, current: T) => T) : T | undefined;
     reduce(reducer: (prev: T, current: T) => T, seed: T) : T;
@@ -67,15 +67,13 @@ export interface Queryable<T> extends Iterable<T>{
     indexOf(value: T) : number | undefined;
     lastIndexOf(value: T) : number | undefined;
     first() : T | undefined;
-    first(predicate: (value: T) => boolean) : T | undefined;
     last() : T | undefined;
-    last(predicate: (value: T) => boolean) : T | undefined;
     firstOrElse(defaultValue: T) : T;
-    firstOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
     lastOrElse(defaultValue: T) : T;
-    lastOrElse(defaultValue: T, predicate: (value: T) => boolean) : T;
     find(predicate: (value: T) => boolean) : T | undefined;
     findLast(predicate: (value: T) => boolean) : T | undefined;
+    findOrElse(defaultValue: T, predicate: (value: T) => boolean) : T | undefined;
+    findLastOrElse(defaultValue: T, predicate: (value: T) => boolean) : T | undefined;
     findIndex(predicate: (value: T) => boolean) : number | undefined;
     findLastIndex(predicate: (value: T) => boolean) : number | undefined;
     findIndices(predicate: (value: T) => boolean) : number[]
