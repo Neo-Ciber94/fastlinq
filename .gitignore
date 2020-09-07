@@ -1,4 +1,4 @@
 node_modules
 type-declarations
 index.ts
-lib
+dist
