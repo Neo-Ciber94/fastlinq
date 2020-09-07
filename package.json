@@ -1,8 +1,8 @@
 {
   "name": "fastlinq",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Query library for Typescript",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "types": "dist/type-declarations/index.d.ts",
   "keywords": ["linq", "iterable", "iterator", "iteration", "functional", "lazy"],
   "scripts": {
