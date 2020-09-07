@@ -4,7 +4,7 @@
     "target": "es5",
     "module": "commonjs",
     "outDir": "dist",
-    "declarationDir": "dist",
+    "declarationDir": "type-declarations",
     "declaration": true,
     "downlevelIteration": true,
     "strict": true,
