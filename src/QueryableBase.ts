@@ -925,7 +925,7 @@ function iterableToString(iterable: any, options: ToStringOptions) : string{
                 result += iterableToString(current.value, options);
             }
             else{
-                result += current.value;
+                result += JSON.stringify(current.value, undefined, 2);
             }
 
             if(next.done){
