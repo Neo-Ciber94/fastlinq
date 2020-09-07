@@ -1,9 +1,8 @@
-import { performance } from 'perf_hooks';
-
+import { performance } from "perf_hooks";
 
 export function measureTime(f: () => void): number {
-    const start = performance.now();
-    f();
-    const end = performance.now();
-    return end - start;
+  const start = performance.now();
+  f();
+  const end = performance.now();
+  return end - start;
 }

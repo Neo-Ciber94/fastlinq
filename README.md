@@ -2,6 +2,12 @@
 
 Provides a lazy evaluated type that provides a set of methods for query over the values of a collection. It provides methods for transform, filter, update, combine an iterable or compute a result with the elements of the iterable.
 
+### Getting started
+Install ```fastlinq``` using npm:
+```
+npm install fastlinq
+```
+
 ### Example
 ```ts
 import './src/Query';
