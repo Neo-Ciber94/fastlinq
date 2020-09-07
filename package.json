@@ -1,6 +1,6 @@
 {
   "name": "fastlinq",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Query library for Typescript",
   "main": "index.ts",
   "keywords": ["LINQ"],
