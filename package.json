@@ -1,9 +1,9 @@
 {
   "name": "fastlinq",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Query library for Typescript",
   "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/type-declarations/index.d.ts",
   "keywords": ["linq", "iterable", "iterator", "iteration", "functional", "lazy"],
   "scripts": {
     "test": "jest tests/ -- --r esm",
