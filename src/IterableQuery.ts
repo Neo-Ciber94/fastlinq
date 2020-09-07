@@ -1,4 +1,4 @@
-import { IterableQueryBase } from "./IterableQueryBase";
+import { IterableQueryBase } from "./QueryableBase";
 
 export class IterableQuery<T> extends IterableQueryBase<T>{
     readonly iterable: Iterable<T>;

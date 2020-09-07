@@ -966,4 +966,4 @@ function getSizedIterableCount(iter: any) : number | undefined{
 }
 
 // Work around to avoid 'TypeError: Object prototype may only be an Object or null: undefined'
-import { IterableArrayQuery } from "./IterableArrayQuery";
+import { IterableArrayQuery } from "./ArrayQuery";

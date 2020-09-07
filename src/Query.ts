@@ -1,6 +1,6 @@
 import { Queryable } from "./Queryable";
 import { IterableQuery } from "./IterableQuery";
-import { IterableArrayQuery } from "./IterableArrayQuery";
+import { IterableArrayQuery } from "./ArrayQuery";
 import { IterableGenerator } from "./Iterables/IterableGenerator";
 import { KeyValue } from "./Iterables/KeyValue";
 import { RangeIterable } from "./Iterables/RangeIterable";

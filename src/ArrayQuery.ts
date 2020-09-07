@@ -1,6 +1,6 @@
 import { Queryable } from "./Queryable";
 import { IterableQuery } from "./IterableQuery";
-import { IterableQueryBase } from "./IterableQueryBase";
+import { IterableQueryBase } from "./QueryableBase";
 import { AppendPrependArrayIterable } from "./Iterables/AppendPredendIterable";
 import { IndexedArrayIterable, IndexedValue } from "./Iterables/IndexedIterable";
 import { MapArrayIterable } from "./Iterables/MapIterable";

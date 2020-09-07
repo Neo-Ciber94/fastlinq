@@ -1,4 +1,4 @@
-import { IterableQueryBase } from "../IterableQueryBase";
+import { IterableQueryBase } from "../QueryableBase";
 import { IterableIterator, iteratorDone, iteratorResult } from "./IterableIterator";
 
 export class IterableGenerator<T> implements IterableIterator<T> {

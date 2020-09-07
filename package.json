@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "jest tests/ -- --r esm",
-    "start": "ts-node -r esm index.ts"
+    "start": "ts-node -r esm"
   },
   "author": "Freddy L.",
   "license": "ISC",
